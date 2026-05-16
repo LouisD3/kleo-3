@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia12c: TareaCPA = {
   secuencia_ref: 12,
+  concepto_clave: 'Resolver ecuaciones de la forma ax + b = c',
+  contexto: {
+    personaje: 'Valentina',
+    objetos: { a: { nombre: 'pesa', emoji: '⚖️' }, b: { nombre: 'incognita', emoji: '❓' } },
+    valores_clave: { ecuacion: '2x + 1 = 7', solucion: 3 },
+    tipo: 'ecuacion',
+    narrativa: 'Valentina enfrenta una ecuacion mas compleja: 2 bolsas iguales mas 1 pesa suelta equilibran 7 pesas.',
+    pregunta_central: '¿Cuanto pesa cada bolsa si 2x + 1 = 7?',
+    transiciones: {
+      concreto: 'Primero quita 1 pesa de cada lado, luego divide entre 2.',
+      bridge_pictorico: '2x + 1 = 7 → 2x = 6 → x = 3.',
+      pictorico: 'Observa los dos pasos en el modelo.',
+      bridge_abstracto: 'Resolver en dos pasos: restar constante, luego dividir.',
+      abstracto: 'Ahora resuelve ecuaciones de dos pasos.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'balanza',
@@ -26,7 +42,8 @@ export const tareaSecuencia12c: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         { label: 'Caja 1', valor: 3, color: 'amarillo', subdivisiones: 3 },
         { label: 'Caja 2', valor: 3, color: 'amarillo', subdivisiones: 3 },
@@ -47,9 +64,10 @@ export const tareaSecuencia12c: TareaCPA = {
       {
         pregunta:
           'Explica paso a paso como encontraste el valor de cada caja usando el modelo de barras.',
-        tipo: 'calculo',
+        tipo: 'abierta',
         respuesta:
           'Paso 1: El total es 7 y la pesa vale 1, entonces las 2 cajas juntas valen 7 - 1 = 6.\nPaso 2: Como hay 2 cajas iguales, cada una vale 6 / 2 = 3.\nRespuesta: Cada caja vale 3.',
+        criterios_aceptacion: ['restar la pesa (7 - 1 = 6)', 'dividir entre 2 cajas (6 / 2 = 3)', 'cada caja vale 3'],
       },
     ],
   },
@@ -73,7 +91,14 @@ export const tareaSecuencia12c: TareaCPA = {
         pregunta:
           'Explica con tus palabras los pasos para resolver una ecuacion que tiene dos operaciones, como 2x + 3 = 11.',
         respuesta:
-          'Para resolver una ecuacion con dos operaciones se trabaja al reves de como se construyo. Primero se quita lo que esta sumado o restado: restamos 3 de ambos lados para obtener 2x = 8. Luego se quita lo que esta multiplicado: dividimos ambos lados entre 2 para obtener x = 4. Siempre se hace la misma operacion en ambos lados para mantener el equilibrio de la ecuacion.',
+          'Primero se quita lo que esta sumado: 2x + 3 - 3 = 11 - 3, queda 2x = 8. Luego se divide para quitar la multiplicacion: x = 8 / 2 = 4. Siempre se opera igual en ambos lados.',
+        criterios_aceptacion: [
+          'dos pasos en orden correcto',
+          'restar primero',
+          'dividir despues',
+          'operar en ambos lados',
+          'resultado x=4',
+        ],
       },
     ],
   },

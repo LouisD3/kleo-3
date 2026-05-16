@@ -110,6 +110,8 @@ export default function CompasCirculo({
           viewBox={`0 0 ${svgWidth} ${svgHeight}`}
           className="border border-gray-200 rounded-xl bg-white"
           style={{ maxWidth: '100%', height: 'auto' }}
+          role="application"
+          aria-label="Compas para trazar circulos"
         >
           {/* Grid dots */}
           {dots}
@@ -276,7 +278,7 @@ export default function CompasCirculo({
               radio === 0
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 : errorFlash
-                  ? 'bg-red-500 text-white animate-[shake_0.3s_ease-in-out]'
+                  ? 'bg-amber-500 text-white animate-[shake_0.3s_ease-in-out]'
                   : 'bg-gray-900 text-white hover:bg-gray-800 active:scale-[0.98]'
             }
           `}

@@ -164,7 +164,8 @@ export default function TirasFracciones({
   }, [validado, seleccionPorFila, spec, intentos, intentos_para_pista, pistaVisible, onValidado])
 
   // ── SVG dimensions ──
-  const labelW = 48
+  const maxDenom = Math.max(...spec.filas.map((f) => f.divisiones))
+  const labelW = maxDenom >= 10 ? 56 : 48
   const padding = 8
   const stripH = 44 // height of each strip (large touch targets)
   const rowGap = 6
@@ -183,6 +184,8 @@ export default function TirasFracciones({
           height={svgH}
           viewBox={`0 0 ${svgW} ${svgH}`}
           className="max-w-full h-auto"
+          role="application"
+          aria-label="Tiras de fracciones"
         >
           {spec.filas.map((fila, filaIdx) => {
             const y = padding + filaIdx * (stripH + rowGap)
@@ -345,7 +348,7 @@ export default function TirasFracciones({
               filasConSeleccion === 0
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 : errorFlash
-                  ? 'bg-red-500 text-white animate-[shake_0.3s_ease-in-out]'
+                  ? 'bg-amber-500 text-white animate-[shake_0.3s_ease-in-out]'
                   : 'bg-gray-900 text-white hover:bg-gray-800 active:scale-[0.98]'
             }
           `}

@@ -2,27 +2,30 @@
 
 import type { BloqueConcreto } from '@/types/tarea-cpa'
 import AzulejosAlgebra from './AzulejosAlgebra'
-import CompasCirculo from './CompasCirculo'
-import DadosRuleta from './DadosRuleta'
 import Balanza from './Balanza'
 import BloquesBase10 from './BloquesBase10'
 import ChocolateSecable from './ChocolateSecable'
+import CompasCirculo from './CompasCirculo'
 import Cuadricula100 from './Cuadricula100'
-import DulcesAgrupables from './DulcesAgrupables'
+import DadosRuleta from './DadosRuleta'
 import FichasPositivasNegativas from './FichasPositivasNegativas'
 import Geoplano from './Geoplano'
 import HistogramaConstruible from './HistogramaConstruible'
 import InterruptoresBinarios from './InterruptoresBinarios'
+import ManipulableAgrupable from './ManipulableAgrupable'
 import PatronFiguras from './PatronFiguras'
 import RectaNumerica from './RectaNumerica'
 import TablaVerdad from './TablaVerdad'
 import TirasFracciones from './TirasFracciones'
+import Transportador from './Transportador'
+import VarillasTriangulo from './VarillasTriangulo'
 
 interface Props {
   bloque: BloqueConcreto
   // biome-ignore lint/suspicious/noExplicitAny: each manipulable has its own state shape
   estadoInicial?: any
   onValidado: (intentos: number, pistaUsada: boolean) => void
+  onDiagnostico?: (diagnostico: string) => void
   // biome-ignore lint/suspicious/noExplicitAny: each manipulable has its own state shape
   onChange?: (estado: any) => void
 }
@@ -31,6 +34,7 @@ export default function ManipulableDispatcher({
   bloque,
   estadoInicial,
   onValidado,
+  onDiagnostico,
   onChange,
 }: Props) {
   const spec = bloque.manipulable
@@ -38,11 +42,12 @@ export default function ManipulableDispatcher({
   switch (spec.tipo_concreto) {
     case 'dulces_agrupables':
       return (
-        <DulcesAgrupables
+        <ManipulableAgrupable
           spec={spec}
           intentos_para_pista={bloque.intentos_para_pista}
           estadoInicial={estadoInicial}
           onValidado={onValidado}
+          onDiagnostico={onDiagnostico}
           onChange={onChange}
         />
       )
@@ -54,6 +59,7 @@ export default function ManipulableDispatcher({
           intentos_para_pista={bloque.intentos_para_pista}
           estadoInicial={estadoInicial}
           onValidado={onValidado}
+          onDiagnostico={onDiagnostico}
           onChange={onChange}
         />
       )
@@ -76,6 +82,7 @@ export default function ManipulableDispatcher({
           intentos_para_pista={bloque.intentos_para_pista}
           estadoInicial={estadoInicial}
           onValidado={onValidado}
+          onDiagnostico={onDiagnostico}
           onChange={onChange}
         />
       )
@@ -204,6 +211,28 @@ export default function ManipulableDispatcher({
     case 'interruptores_binarios':
       return (
         <InterruptoresBinarios
+          spec={spec}
+          intentos_para_pista={bloque.intentos_para_pista}
+          estadoInicial={estadoInicial}
+          onValidado={onValidado}
+          onChange={onChange}
+        />
+      )
+
+    case 'transportador':
+      return (
+        <Transportador
+          spec={spec}
+          intentos_para_pista={bloque.intentos_para_pista}
+          estadoInicial={estadoInicial}
+          onValidado={onValidado}
+          onChange={onChange}
+        />
+      )
+
+    case 'varillas_triangulo':
+      return (
+        <VarillasTriangulo
           spec={spec}
           intentos_para_pista={bloque.intentos_para_pista}
           estadoInicial={estadoInicial}

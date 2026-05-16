@@ -2,15 +2,18 @@
 
 import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { EstadoManipulable } from '@/components/manipulables/DulcesAgrupables'
+import type { EstadoManipulable } from '@/components/manipulables/ManipulableAgrupable'
 import ManipulableDispatcher from '@/components/manipulables/ManipulableDispatcher'
+import DiagramaGeometrico from '@/components/pictorico/DiagramaGeometrico'
 import ModeloBarras from '@/components/pictorico/ModeloBarras'
+import TablaPictorica from '@/components/pictorico/TablaPictorica'
 import Boton from '@/components/ui/Boton'
 import Spinner from '@/components/ui/Spinner'
 import type {
   BloqueAbstracto,
   BloqueConcreto,
   BloquePictorico,
+  ContextoAnchor,
   EtapaCPA,
   PreguntaAbstracto,
   PreguntaPictorico,
@@ -98,6 +101,7 @@ export default function StepperCPA({ tareaCPA, tareaId, alumnoId, onSubmit, subm
   const [estadoManipulable, setEstadoManipulable] = useState<EstadoManipulable | undefined>(
     saved.current?.concreto_estado?.estado_manipulable as EstadoManipulable | undefined,
   )
+  const [diagnostico, setDiagnostico] = useState<string | null>(null)
 
   // Pictorico state
   const [pictoricoResp, setPictoricoResp] = useState<Record<string, string | boolean>>(
@@ -170,15 +174,26 @@ export default function StepperCPA({ tareaCPA, tareaId, alumnoId, onSubmit, subm
 
   // ── Concreto handlers ─────────────────────────────────────────
 
+  const [recapConcreto, setRecapConcreto] = useState(false)
+
   function handleConcretoValidado(intentos: number, pistaUsada: boolean) {
     setConcretoIntentos(intentos)
     setConcretoPista(pistaUsada)
     setConcretoValidado(true)
-    setTimeout(() => setEtapa('pictorico'), 1500)
+    setRecapConcreto(true)
+    setTimeout(() => {
+      setRecapConcreto(false)
+      setEtapa('pictorico')
+    }, 3000)
   }
 
   function handleManipulableChange(estado: EstadoManipulable) {
     setEstadoManipulable(estado)
+  }
+
+  function handleDiagnostico(msg: string) {
+    setDiagnostico(msg)
+    setTimeout(() => setDiagnostico(null), 5000)
   }
 
   // ── Pictorico handlers ────────────────────────────────────────
@@ -194,7 +209,13 @@ export default function StepperCPA({ tareaCPA, tareaId, alumnoId, onSubmit, subm
     for (let i = 0; i < preguntas.length; i++) {
       const p = preguntas[i]
       const resp = pictoricoResp[i]
-      if (resp === undefined || resp === null || String(resp).trim() === '') {
+      const respStr = String(resp ?? '').trim()
+      if (respStr === '') {
+        allCorrect = false
+        break
+      }
+      // Reject trivially short answers for open/calc questions
+      if ((p.tipo === 'calculo' || p.tipo === 'abierta') && respStr.length < 3) {
         allCorrect = false
         break
       }
@@ -213,7 +234,7 @@ export default function StepperCPA({ tareaCPA, tareaId, alumnoId, onSubmit, subm
     if (allCorrect) {
       setPictoricoValidado(true)
       setPictoricoError(false)
-      setTimeout(() => setEtapa('abstracto'), 1000)
+      setTimeout(() => setEtapa('abstracto'), 3000)
     } else {
       setPictoricoError(true)
       setTimeout(() => setPictoricoError(false), 2000)
@@ -238,9 +259,7 @@ export default function StepperCPA({ tareaCPA, tareaId, alumnoId, onSubmit, subm
 
   async function handleCorregir() {
     // Check if there are any calculo/abierta questions that need AI grading
-    const needsAI = abstractoPreguntas.some(
-      (p) => p.tipo === 'calculo' || p.tipo === 'abierta',
-    )
+    const needsAI = abstractoPreguntas.some((p) => p.tipo === 'calculo' || p.tipo === 'abierta')
 
     if (!needsAI) {
       // All objective — skip AI, submit directly
@@ -357,6 +376,9 @@ export default function StepperCPA({ tareaCPA, tareaId, alumnoId, onSubmit, subm
         })}
       </div>
 
+      {/* Anchor banner — persists across step transitions */}
+      {tareaCPA.contexto && <BandeauContexto contexto={tareaCPA.contexto} />}
+
       {/* Step content */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -367,12 +389,28 @@ export default function StepperCPA({ tareaCPA, tareaId, alumnoId, onSubmit, subm
           transition={{ duration: 0.2 }}
         >
           {etapa === 'concreto' && (
-            <EtapaConcreto
-              bloque={tareaCPA.concreto}
-              estadoInicial={estadoManipulable}
-              onValidado={handleConcretoValidado}
-              onChange={handleManipulableChange}
-            />
+            <>
+              <EtapaConcreto
+                bloque={tareaCPA.concreto}
+                estadoInicial={estadoManipulable}
+                onValidado={handleConcretoValidado}
+                onDiagnostico={handleDiagnostico}
+                onChange={handleManipulableChange}
+                diagnostico={diagnostico}
+                transicion={tareaCPA.contexto?.transiciones.concreto}
+              />
+              {recapConcreto && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="rounded-xl bg-green-50 border border-green-200 px-4 py-3 text-center"
+                >
+                  <p className="text-sm font-semibold text-green-700">
+                    Acabas de resolver el paso Concreto. Ahora vamos al modelo visual.
+                  </p>
+                </motion.div>
+              )}
+            </>
           )}
 
           {etapa === 'pictorico' && (
@@ -383,6 +421,8 @@ export default function StepperCPA({ tareaCPA, tareaId, alumnoId, onSubmit, subm
               validado={pictoricoValidado}
               error={pictoricoError}
               onValidar={validarPictorico}
+              bridge={tareaCPA.contexto?.transiciones.bridge_pictorico}
+              transicion={tareaCPA.contexto?.transiciones.pictorico}
             />
           )}
 
@@ -398,6 +438,8 @@ export default function StepperCPA({ tareaCPA, tareaId, alumnoId, onSubmit, subm
               corrigiendo={corrigiendo}
               retroIA={retroIA}
               errorIA={errorIA}
+              bridge={tareaCPA.contexto?.transiciones.bridge_abstracto}
+              transicion={tareaCPA.contexto?.transiciones.abstracto}
             />
           )}
         </motion.div>
@@ -412,12 +454,18 @@ function EtapaConcreto({
   bloque,
   estadoInicial,
   onValidado,
+  onDiagnostico,
   onChange,
+  diagnostico,
+  transicion,
 }: {
   bloque: BloqueConcreto
   estadoInicial?: EstadoManipulable
   onValidado: (intentos: number, pistaUsada: boolean) => void
+  onDiagnostico?: (diagnostico: string) => void
   onChange: (estado: EstadoManipulable) => void
+  diagnostico?: string | null
+  transicion?: string
 }) {
   return (
     <div className="card p-5 sm:p-6">
@@ -426,14 +474,48 @@ function EtapaConcreto({
         titulo="Concreto"
         descripcion="Manipula los objetos para resolver el problema"
       />
+      {transicion && <TransicionNarrativa texto={transicion} />}
       <ManipulableDispatcher
         bloque={bloque}
         estadoInicial={estadoInicial}
         onValidado={onValidado}
+        onDiagnostico={onDiagnostico}
         onChange={onChange}
       />
+      <AnimatePresence>
+        {diagnostico && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="mt-3 rounded-lg bg-orange-50 border border-orange-200 px-4 py-2 text-sm text-orange-800"
+          >
+            {diagnostico}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
+}
+
+// ── Visual representation dispatcher ─────────────────────────────
+
+function RepresentacionVisual({ bloque }: { bloque: BloquePictorico }) {
+  // New field: representacion (discriminated union)
+  const rep = bloque.representacion ?? (bloque.modelo_barras ? { ...bloque.modelo_barras, tipo_representacion: 'modelo_barras' as const } : null)
+
+  if (!rep) return null
+
+  switch (rep.tipo_representacion) {
+    case 'modelo_barras':
+      return <ModeloBarras spec={rep} className="mb-6" />
+    case 'diagrama_geometrico':
+      return <DiagramaGeometrico spec={rep} className="mb-6" />
+    case 'tabla':
+      return <TablaPictorica spec={rep} className="mb-6" />
+    default:
+      return null
+  }
 }
 
 // ── Step: Pictorico ──────────────────────────────────────────────
@@ -445,6 +527,8 @@ function EtapaPictorico({
   validado,
   error,
   onValidar,
+  bridge,
+  transicion,
 }: {
   bloque: BloquePictorico
   respuestas: Record<string, string | boolean>
@@ -452,6 +536,8 @@ function EtapaPictorico({
   validado: boolean
   error: boolean
   onValidar: () => void
+  bridge?: string
+  transicion?: string
 }) {
   return (
     <div className="space-y-4">
@@ -459,9 +545,11 @@ function EtapaPictorico({
         <StepHeader
           numero={2}
           titulo="Pictorico"
-          descripcion="Observa el modelo de barras y responde"
+          descripcion="Observa la representacion visual y responde"
         />
-        <ModeloBarras spec={bloque.modelo_barras} className="mb-6" />
+        {bridge && <BridgeRetrospectivo texto={bridge} />}
+        {transicion && <TransicionNarrativa texto={transicion} />}
+        <RepresentacionVisual bloque={bloque} />
       </div>
 
       {bloque.preguntas.map((p, i) => (
@@ -480,7 +568,7 @@ function EtapaPictorico({
           variante="primario"
           size="lg"
           onClick={onValidar}
-          className={`w-full ${error ? 'animate-[shake_0.3s_ease-in-out] !bg-red-500' : ''}`}
+          className={`w-full ${error ? 'animate-[shake_0.3s_ease-in-out] !bg-amber-500' : ''}`}
         >
           {error ? 'Revisa tus respuestas' : 'Verificar'}
         </Boton>
@@ -493,6 +581,9 @@ function EtapaPictorico({
           className="rounded-xl bg-green-50 border border-green-200 px-4 py-3 text-center"
         >
           <p className="font-bold text-green-700">Correcto!</p>
+          <p className="text-sm text-green-600 mt-1">
+            Acabas de completar el modelo visual. Ahora aplica lo aprendido.
+          </p>
         </motion.div>
       )}
     </div>
@@ -512,6 +603,8 @@ function EtapaAbstracto({
   corrigiendo,
   retroIA,
   errorIA,
+  bridge,
+  transicion,
 }: {
   bloque: BloqueAbstracto
   respuestas: Record<string, string | boolean>
@@ -523,6 +616,8 @@ function EtapaAbstracto({
   corrigiendo: boolean
   retroIA: RetroItem[] | null
   errorIA: string | null
+  bridge?: string
+  transicion?: string
 }) {
   const yaCorregido = retroIA !== null
 
@@ -538,6 +633,8 @@ function EtapaAbstracto({
               : `Resuelve las preguntas (${respondidas}/${total})`
           }
         />
+        {bridge && <BridgeRetrospectivo texto={bridge} />}
+        {transicion && <TransicionNarrativa texto={transicion} />}
       </div>
 
       {bloque.preguntas.map((p, i) => {
@@ -558,12 +655,10 @@ function EtapaAbstracto({
                 className={`mx-1 -mt-1 rounded-b-xl px-4 py-3 text-sm border-x border-b ${
                   retro.correcta
                     ? 'bg-green-50 border-green-200 text-green-700'
-                    : 'bg-red-50 border-red-200 text-red-700'
+                    : 'bg-amber-50 border-amber-200 text-amber-700'
                 }`}
               >
-                <span className="font-semibold">
-                  {retro.correcta ? 'Correcto' : 'Incorrecto'}:
-                </span>{' '}
+                <span className="font-semibold">{retro.correcta ? 'Correcto' : 'Incorrecto'}:</span>{' '}
                 {retro.comentario}
               </motion.div>
             )}
@@ -572,7 +667,7 @@ function EtapaAbstracto({
       })}
 
       {errorIA && (
-        <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-700">
           {errorIA}
         </div>
       )}
@@ -602,6 +697,33 @@ function EtapaAbstracto({
       </Boton>
     </div>
   )
+}
+
+// ── Anchor banner (persistent across steps) ─────────────────────
+
+function BandeauContexto({ contexto }: { contexto: ContextoAnchor }) {
+  return (
+    <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3">
+      <p className="text-sm text-amber-900 leading-relaxed">{contexto.narrativa}</p>
+      <p className="text-sm font-semibold text-amber-800 mt-1">{contexto.pregunta_central}</p>
+    </div>
+  )
+}
+
+// ── Bridge retrospectif (resume ce que l'eleve a decouvert) ─────
+
+function BridgeRetrospectivo({ texto }: { texto: string }) {
+  return (
+    <div className="rounded-lg bg-green-50 border border-green-200 px-3 py-2 mb-2">
+      <p className="text-sm font-medium text-green-700">{texto}</p>
+    </div>
+  )
+}
+
+// ── Transition intro ────────────────────────────────────────────
+
+function TransicionNarrativa({ texto }: { texto: string }) {
+  return <p className="text-sm text-gray-600 italic leading-relaxed mb-3">{texto}</p>
 }
 
 // ── Shared: Step header ──────────────────────────────────────────

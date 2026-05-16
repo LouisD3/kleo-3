@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia23: TareaCPA = {
   secuencia_ref: 23,
+  concepto_clave: 'Explorar la relacion entre radio y circunferencia',
+  contexto: {
+    personaje: 'Camila',
+    objetos: { a: { nombre: 'circulo', emoji: '⭕' }, b: { nombre: 'cuerda', emoji: '🧵' } },
+    valores_clave: { radio: 2 },
+    tipo: 'geometria',
+    narrativa: 'Camila envuelve una cuerda alrededor de un circulo de radio 2 para descubrir la relacion entre radio y circunferencia.',
+    pregunta_central: '¿Cuanto mide la circunferencia de un circulo de radio 2?',
+    transiciones: {
+      concreto: 'Traza el circulo con el compas de radio 2 y mide su contorno.',
+      bridge_pictorico: 'El diametro es 4. La circunferencia mide aproximadamente 12.56 (pi × 4).',
+      pictorico: 'Observa la relacion entre diametro y circunferencia en el modelo.',
+      bridge_abstracto: 'C = 2πr. Para r = 2, C ≈ 12.56.',
+      abstracto: 'Ahora calcula circunferencias con otros radios.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'compas_circulo',
@@ -23,10 +39,11 @@ export const tareaSecuencia23: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         { label: 'Diametro (2r)', valor: 4, color: 'azul', subdivisiones: 4 },
-        { label: 'Circunferencia (aprox)', valor: 12, color: 'verde', subdivisiones: 12 },
+        { label: 'Circunferencia (≈12.56)', valor: 12.56, color: 'verde' },
       ],
       orientacion: 'horizontal',
     },
@@ -41,8 +58,9 @@ export const tareaSecuencia23: TareaCPA = {
       {
         pregunta:
           'Si divides la circunferencia entre el diametro, siempre obtienes el mismo numero (aproximadamente 3.14). Como se llama ese numero?',
-        tipo: 'calculo',
+        tipo: 'abierta',
         respuesta: 'Ese numero se llama pi (π). Circunferencia / diametro = 12.56 / 4 = 3.14. Pi es siempre igual, sin importar el tamano del circulo.',
+        criterios_aceptacion: ['pi o π', 'circunferencia / diametro', 'aproximadamente 3.14', 'constante'],
       },
     ],
   },
@@ -66,7 +84,13 @@ export const tareaSecuencia23: TareaCPA = {
         pregunta:
           'Explica con tus palabras por que el numero pi aparece siempre que se trabaja con circulos, sin importar su tamano.',
         respuesta:
-          'Pi aparece siempre porque es la relacion constante entre la circunferencia y el diametro de CUALQUIER circulo. No importa si el circulo es muy grande o muy chico, si divides cuanto mide su borde entre cuanto mide de lado a lado, siempre da aproximadamente 3.14. Es una propiedad de la forma circular misma.',
+          'Pi es la relacion entre la circunferencia y el diametro de cualquier circulo. No importa el tamano: si divides el borde entre el diametro, siempre obtienes aproximadamente 3.14. Es una constante de la forma circular.',
+        criterios_aceptacion: [
+          'relacion constante',
+          'circunferencia entre diametro',
+          'aproximadamente 3.14',
+          'cualquier circulo',
+        ],
       },
     ],
   },

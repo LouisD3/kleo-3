@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia05b: TareaCPA = {
   secuencia_ref: 5,
+  concepto_clave: 'Sumar dos numeros con reagrupacion',
+  contexto: {
+    personaje: 'Diego',
+    objetos: { a: { nombre: 'bloque', emoji: '🧱' }, b: { nombre: 'suma', emoji: '➕' } },
+    valores_clave: { objetivo: 235 },
+    tipo: 'numero',
+    narrativa: 'Diego quiere sumar 148 + 87 usando bloques de base 10 y aprender cuando hay que reagrupar.',
+    pregunta_central: '¿Cuanto es 148 + 87?',
+    transiciones: {
+      concreto: 'Junta los bloques de ambos numeros y reagrupa cuando tengas 10 o mas.',
+      bridge_pictorico: 'Al reagrupar, obtuviste 235.',
+      pictorico: 'Observa como se ve la suma en el modelo.',
+      bridge_abstracto: 'La reagrupacion es cuando 10 unidades se convierten en 1 decena.',
+      abstracto: 'Ahora suma otros numeros con reagrupacion.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'bloques_base10',
@@ -24,7 +40,8 @@ export const tareaSecuencia05b: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         { label: 'Seccion A', valor: 148, color: 'azul', subdivisiones: 1 },
         { label: 'Seccion B', valor: 87, color: 'verde', subdivisiones: 1 },
@@ -69,7 +86,13 @@ export const tareaSecuencia05b: TareaCPA = {
         pregunta:
           'Explica con tus palabras que pasa cuando las unidades de una suma dan mas de 10. Usa un ejemplo.',
         respuesta:
-          'Cuando las unidades suman mas de 10, hacemos una reagrupacion (tambien llamada "acarreo"). Tomamos 10 de esas unidades y las convertimos en 1 decena. Por ejemplo, en 148 + 87: las unidades son 8 + 7 = 15. Como 15 es mayor que 10, escribimos 5 en las unidades y llevamos 1 decena al siguiente lugar. Esto funciona porque 10 unidades equivalen a 1 decena en nuestro sistema base 10.',
+          'Cuando las unidades suman mas de 10 hacemos una reagrupacion o acarreo: convertimos 10 unidades en 1 decena. En 148 + 87, las unidades dan 15: escribimos 5 y llevamos 1 decena.',
+        criterios_aceptacion: [
+          'reagrupacion o acarreo',
+          '10 unidades = 1 decena',
+          'escribir el residuo y llevar el acarreo',
+          'ejemplo con numeros correctos',
+        ],
       },
     ],
   },

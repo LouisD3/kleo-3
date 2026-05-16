@@ -5,11 +5,27 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  * Concepto clave: Clasificar triángulos y cuadriláteros por sus propiedades
  *
  * Concreto: Geoplano (paralelogramo para explorar propiedades)
- * Pictorico: Modelo en barras comparando lados del paralelogramo
+ * Pictorico: Tabla comparativa de propiedades de cuadrilateros
  * Abstracto: 3 preguntas con progresión de dificultad sobre clasificación de figuras
  */
 export const tareaSecuencia21: TareaCPA = {
   secuencia_ref: 21,
+  concepto_clave: 'Clasificar triángulos y cuadriláteros por sus propiedades',
+  contexto: {
+    personaje: 'Roberto',
+    objetos: { a: { nombre: 'figura', emoji: '🔷' }, b: { nombre: 'propiedad', emoji: '📋' } },
+    valores_clave: { lados: 4 },
+    tipo: 'geometria',
+    narrativa: 'Roberto clasifica figuras geometricas segun sus propiedades: lados paralelos, lados iguales y angulos rectos.',
+    pregunta_central: '¿Que propiedades tiene un paralelogramo?',
+    transiciones: {
+      concreto: 'Traza un paralelogramo en el geoplano y observa sus lados.',
+      bridge_pictorico: 'Los lados opuestos son paralelos e iguales entre si.',
+      pictorico: 'Compara las propiedades de diferentes cuadrilateros en la tabla.',
+      bridge_abstracto: 'El paralelogramo incluye al rectangulo, rombo y cuadrado.',
+      abstracto: 'Ahora clasifica figuras por sus propiedades.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'geoplano',
@@ -28,21 +44,31 @@ export const tareaSecuencia21: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
-      barras: [
-        { label: 'Lado a', valor: 3, color: 'azul' },
-        { label: 'Lado b', valor: 2, color: 'verde' },
-        { label: 'Lado a', valor: 3, color: 'azul' },
-        { label: 'Lado b', valor: 2, color: 'verde' },
+    representacion: {
+      tipo_representacion: 'tabla',
+      columnas: [
+        { key: 'figura', header: 'Figura' },
+        { key: 'lados_paralelos', header: 'Pares de lados paralelos' },
+        { key: 'lados_iguales', header: 'Lados iguales' },
+        { key: 'angulos_rectos', header: 'Angulos rectos' },
       ],
-      total: { valor: 10, visible: true },
-      incognita: { posicion: 'total', label: 'Perímetro = ?' },
-      orientacion: 'horizontal',
+      filas: [
+        { figura: 'Paralelogramo', lados_paralelos: 2, lados_iguales: 'Opuestos iguales', angulos_rectos: 'No necesariamente' },
+        { figura: 'Rectangulo', lados_paralelos: 2, lados_iguales: 'Opuestos iguales', angulos_rectos: 'Si (4 de 90°)' },
+        { figura: 'Rombo', lados_paralelos: 2, lados_iguales: 'Todos iguales', angulos_rectos: 'No necesariamente' },
+        { figura: 'Trapecio', lados_paralelos: 1, lados_iguales: 'No necesariamente', angulos_rectos: 'No necesariamente' },
+      ],
+      resaltados: [
+        { fila: 0, columna: 'lados_paralelos', color: '#3B82F6' },
+        { fila: 1, columna: 'angulos_rectos', color: '#10B981' },
+        { fila: 2, columna: 'lados_iguales', color: '#8B5CF6' },
+      ],
+      titulo: 'Propiedades de cuadrilateros',
     },
     preguntas: [
       {
         pregunta:
-          'El modelo de barras muestra los cuatro lados de un paralelogramo. ¿Qué observas sobre los lados opuestos?',
+          'La tabla muestra las propiedades de varios cuadrilateros. ¿Que observas sobre los lados opuestos del paralelogramo?',
         tipo: 'opcion_multiple',
         opciones: [
           'A) Todos miden igual',
@@ -55,9 +81,10 @@ export const tareaSecuencia21: TareaCPA = {
       {
         pregunta:
           'Compara el paralelogramo con un rectángulo. ¿En qué se parecen y en qué se diferencian?',
-        tipo: 'calculo',
+        tipo: 'abierta',
         respuesta:
           'Semejanzas: ambos tienen dos pares de lados paralelos y los lados opuestos son iguales. Diferencias: en el rectángulo todos los ángulos son de 90°, mientras que en el paralelogramo los ángulos no son necesariamente rectos. El rectángulo es un caso particular de paralelogramo donde todos los ángulos son rectos.',
+        criterios_aceptacion: ['2 pares de lados paralelos en comun', 'rectangulo tiene angulos de 90°', 'paralelogramo no necesariamente 90°', 'rectangulo es caso particular'],
       },
     ],
   },
@@ -82,7 +109,14 @@ export const tareaSecuencia21: TareaCPA = {
         pregunta:
           'Explica la relación entre un cuadrado, un rectángulo, un rombo y un paralelogramo. ¿Cuál incluye a los demás y por qué?',
         respuesta:
-          'El paralelogramo es la figura más general: solo requiere dos pares de lados paralelos. El rectángulo es un paralelogramo con todos los ángulos de 90°. El rombo es un paralelogramo con todos los lados iguales. El cuadrado cumple las condiciones del rectángulo y del rombo a la vez: tiene todos los ángulos de 90° y todos los lados iguales. Entonces el paralelogramo incluye a todos los demás. El cuadrado es a la vez un rectángulo y un rombo. Es como una jerarquía: paralelogramo es la familia, rectángulo y rombo son subgrupos, y el cuadrado pertenece a ambos subgrupos.',
+          'El paralelogramo es la figura más general (dos pares de lados paralelos) e incluye a las demás. El rectángulo es un paralelogramo con ángulos de 90°, el rombo tiene todos los lados iguales, y el cuadrado cumple ambas condiciones a la vez.',
+        criterios_aceptacion: [
+          'paralelogramo incluye a los demás',
+          'ángulos de 90° en el rectángulo',
+          'lados iguales en el rombo',
+          'cuadrado es rectángulo y rombo',
+          'jerarquía de figuras',
+        ],
       },
     ],
   },

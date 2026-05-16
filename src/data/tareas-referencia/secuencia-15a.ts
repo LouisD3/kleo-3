@@ -10,15 +10,28 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia15a: TareaCPA = {
   secuencia_ref: 15,
+  concepto_clave: 'Encontrar la constante de proporcionalidad',
+  contexto: {
+    personaje: 'Daniela',
+    objetos: { a: { nombre: 'galleta', emoji: '🍪' }, b: { nombre: 'amigo', emoji: '🧑' } },
+    valores_clave: { razon: [3, 1], objetivo: 15 },
+    tipo: 'proporcion',
+    narrativa: 'Daniela reparte 15 galletas entre 5 amigos. Siempre da la misma cantidad a cada uno. Quiere encontrar la constante de proporcionalidad.',
+    pregunta_central: '¿Cuantas galletas recibe cada amigo?',
+    transiciones: {
+      concreto: 'Agrupa las 15 galletas en 5 grupos iguales.',
+      bridge_pictorico: '15 galletas ÷ 5 amigos = 3 galletas cada uno. La constante es 3.',
+      pictorico: 'Observa la relacion proporcional en el modelo.',
+      bridge_abstracto: 'La constante de proporcionalidad k = 3 galletas/amigo.',
+      abstracto: 'Ahora encuentra constantes en otras relaciones.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'dulces_agrupables',
       cantidad: 15,
       grupos_objetivo: 5,
-      soluciones_validas: [
-        { grupos: 5, por_grupo: 3 },
-        { grupos: 3, por_grupo: 5 },
-      ],
+      soluciones_validas: [{ grupos: 5, por_grupo: 3 }],
       pregunta:
         'Hay 15 galletas para 5 amigos. Agrupalas para que cada uno reciba igual.',
       pista: 'Reparte las galletas una por una entre los 5 amigos hasta que se acaben.',
@@ -26,7 +39,8 @@ export const tareaSecuencia15a: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         { label: 'Amigo 1', valor: 3, color: 'amarillo', subdivisiones: 3 },
         { label: 'Amigo 2', valor: 3, color: 'azul', subdivisiones: 3 },
@@ -73,7 +87,8 @@ export const tareaSecuencia15a: TareaCPA = {
         pregunta:
           'Explica con tus palabras que es la constante de proporcionalidad usando el ejemplo de las galletas.',
         respuesta:
-          'La constante de proporcionalidad es el numero que siempre se obtiene al dividir las galletas entre los amigos. En este caso, siempre da 3 porque cada amigo recibe 3 galletas. Si fueran 10 amigos, serian 30 galletas (10 x 3); si fueran 2 amigos, serian 6 galletas (2 x 3). La constante k = 3 nos dice que la relacion entre galletas y amigos siempre es la misma: 3 galletas por cada amigo.',
+          'La constante k es el numero que siempre sale al dividir galletas entre amigos: 15/5 = 3. Significa que cada amigo recibe 3 galletas sin importar cuantos sean. Con k = 3 puedes calcular el total multiplicando: amigos x 3.',
+        criterios_aceptacion: ['division galletas entre amigos', 'k = 3', 'relacion constante', 'multiplicacion para predecir'],
       },
     ],
   },

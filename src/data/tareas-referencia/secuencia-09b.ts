@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia09b: TareaCPA = {
   secuencia_ref: 9,
+  concepto_clave: 'Predecir terminos de una sucesion aritmetica',
+  contexto: {
+    personaje: 'Miguel',
+    objetos: { a: { nombre: 'figura', emoji: '🔷' }, b: { nombre: 'sucesion', emoji: '📈' } },
+    valores_clave: { patron: [2, 5, 8], siguiente: 11 },
+    tipo: 'patron',
+    narrativa: 'Miguel encontro otra sucesion y quiere predecir terminos futuros sin construirlos todos.',
+    pregunta_central: '¿Cual es el termino 10 de la sucesion 2, 5, 8, 11...?',
+    transiciones: {
+      concreto: 'Construye el siguiente termino del patron para verificar la regla.',
+      bridge_pictorico: 'La sucesion aumenta de 3 en 3. El siguiente termino es 11.',
+      pictorico: 'Observa el crecimiento constante en el modelo.',
+      bridge_abstracto: 'Con la regla general puedes predecir cualquier termino.',
+      abstracto: 'Ahora calcula terminos lejanos usando la formula.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'patron_figuras',
@@ -23,7 +39,8 @@ export const tareaSecuencia09b: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         { label: 'Termino 1', valor: 2, color: 'amarillo' },
         { label: 'Termino 2', valor: 5, color: 'azul' },
@@ -68,9 +85,15 @@ export const tareaSecuencia09b: TareaCPA = {
       {
         tipo: 'abierta',
         pregunta:
-          'Explica como puedes encontrar el termino 100 de una sucesion aritmetica sin calcular todos los terminos anteriores. Usa la sucesion de circulos (2, 5, 8, 11, ...) como ejemplo.',
+          'La sucesion de circulos es 2, 5, 8, 11... Si quieres saber el termino 10, puedes sumar la diferencia 9 veces desde el inicio: 2 + 3 + 3 + 3... Calcula el termino 10 y explica tu metodo.',
         respuesta:
-          'Puedo usar la formula: termino n = primer termino + (n - 1) x diferencia. Para la sucesion 2, 5, 8, 11...: primer termino = 2, diferencia = 3. Termino 100 = 2 + (100 - 1) x 3 = 2 + 99 x 3 = 2 + 297 = 299. No necesito calcular los 99 terminos anteriores, solo aplico la formula.',
+          'La diferencia constante es 3. Desde el termino 1 (que es 2), sumo 3 nueve veces: 2 + 9×3 = 2 + 27 = 29. El termino 10 es 29.',
+        criterios_aceptacion: [
+          'diferencia = 3',
+          'sumar 3 nueve veces',
+          'resultado 29',
+          'partir del primer termino',
+        ],
       },
     ],
   },

@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia29: TareaCPA = {
   secuencia_ref: 29,
+  concepto_clave: 'Organizar datos en una grafica de barras',
+  contexto: {
+    personaje: 'Profesor Garcia',
+    objetos: { a: { nombre: 'deporte', emoji: '⚽' }, b: { nombre: 'grafica', emoji: '📊' } },
+    valores_clave: { total_alumnos: 20 },
+    tipo: 'estadistica',
+    narrativa: 'El Profesor Garcia hizo una encuesta sobre deportes favoritos en su clase de 20 alumnos. Quiere organizar los resultados en una grafica.',
+    pregunta_central: '¿Como se organizan los datos en una grafica de barras?',
+    transiciones: {
+      concreto: 'Construye el histograma ajustando la altura de cada barra segun los datos.',
+      bridge_pictorico: 'Futbol es el mas popular con 8 alumnos.',
+      pictorico: 'Observa la distribucion en el modelo de barras.',
+      bridge_abstracto: 'La grafica de barras muestra frecuencias de cada categoria.',
+      abstracto: 'Ahora interpreta y construye graficas.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'histograma_construible',
@@ -34,7 +50,8 @@ export const tareaSecuencia29: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         { label: 'Futbol', valor: 8, color: 'azul' },
         { label: 'Basquet', valor: 5, color: 'rojo' },
@@ -82,7 +99,13 @@ export const tareaSecuencia29: TareaCPA = {
         pregunta:
           'Explica con tus palabras por que una grafica de barras es util para representar los resultados de una encuesta.',
         respuesta:
-          'Una grafica de barras permite ver de manera visual y rapida cuales categorias tienen mas o menos frecuencia. Es mas facil comparar cantidades viendo la altura de las barras que leyendo una lista de numeros. Ademas, ayuda a identificar patrones como cual es la categoria mas popular o la menos popular.',
+          'Una grafica de barras permite comparar categorias de forma visual y rapida. Es mas facil ver cual categoria es la mayor o menor mirando la altura de las barras que leyendo una lista de numeros.',
+        criterios_aceptacion: [
+          'visual o rapida comparacion',
+          'altura de las barras',
+          'identificar la mas popular o menos popular',
+          'mas facil que una lista de numeros',
+        ],
       },
     ],
   },

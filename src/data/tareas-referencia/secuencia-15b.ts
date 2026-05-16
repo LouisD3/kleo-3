@@ -10,15 +10,28 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia15b: TareaCPA = {
   secuencia_ref: 15,
+  concepto_clave: 'Usar la constante para predecir',
+  contexto: {
+    personaje: 'Daniela',
+    objetos: { a: { nombre: 'galleta', emoji: '🍪' }, b: { nombre: 'amigo', emoji: '🧑' } },
+    valores_clave: { razon: [3, 1], objetivo: 24 },
+    tipo: 'proporcion',
+    narrativa: 'Daniela ya sabe que cada amigo recibe 3 galletas (k = 3). Ahora quiere predecir cuantas galletas necesita para grupos mas grandes.',
+    pregunta_central: '¿Cuantas galletas necesita para 8 amigos?',
+    transiciones: {
+      concreto: 'Verifica con 15 galletas y 5 amigos que k = 3.',
+      bridge_pictorico: 'Cada amigo recibe 3 galletas. La constante k = 3 se repite.',
+      pictorico: 'Observa como se puede predecir con la constante.',
+      bridge_abstracto: 'Con k = 3, puedes predecir: galletas = 3 × amigos.',
+      abstracto: 'Ahora usa la constante para predecir en otras situaciones.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'dulces_agrupables',
       cantidad: 15,
       grupos_objetivo: 5,
-      soluciones_validas: [
-        { grupos: 5, por_grupo: 3 },
-        { grupos: 3, por_grupo: 5 },
-      ],
+      soluciones_validas: [{ grupos: 5, por_grupo: 3 }],
       pregunta:
         '15 galletas entre 5 amigos. Agrupa para encontrar cuantas recibe cada uno.',
       pista: 'Distribuye las galletas una por una entre los 5 amigos.',
@@ -26,7 +39,8 @@ export const tareaSecuencia15b: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         { label: 'Amigo 1', valor: 3, color: 'amarillo', subdivisiones: 3 },
         { label: 'Amigo 2', valor: 3, color: 'azul', subdivisiones: 3 },
@@ -75,7 +89,8 @@ export const tareaSecuencia15b: TareaCPA = {
         pregunta:
           'Explica como la constante de proporcionalidad te permite predecir sin contar uno por uno.',
         respuesta:
-          'La constante de proporcionalidad es un atajo: en vez de repartir galleta por galleta, ya se que cada amigo recibe 3. Entonces solo multiplico 3 por el numero de amigos para saber cuantas galletas necesito en total. No necesito contar una por una porque la relacion siempre es la misma. Es como una regla fija: si k = 3, entonces para cualquier numero de amigos puedo calcular el total con una simple multiplicacion.',
+          'Con k = 3, solo multiplico: amigos x 3 = galletas totales. No necesito repartir una por una porque la relacion siempre es la misma. Por ejemplo, 8 amigos x 3 = 24 galletas.',
+        criterios_aceptacion: ['multiplicacion con k', 'relacion siempre igual', 'prediccion sin contar', 'ejemplo con numeros'],
       },
     ],
   },

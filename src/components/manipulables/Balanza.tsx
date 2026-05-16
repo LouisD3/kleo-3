@@ -9,6 +9,7 @@ interface Props {
   intentos_para_pista: number
   estadoInicial?: EstadoManipulable
   onValidado: (intentos: number, pistaUsada: boolean) => void
+  onDiagnostico?: (diagnostico: string) => void
   onChange?: (estado: EstadoManipulable) => void
 }
 
@@ -37,6 +38,7 @@ export default function Balanza({
   intentos_para_pista,
   estadoInicial,
   onValidado,
+  onDiagnostico,
   onChange,
 }: Props) {
   const [valorX, setValorX] = useState(estadoInicial?.valorX ?? '')
@@ -76,8 +78,17 @@ export default function Balanza({
       if (nuevoIntentos >= intentos_para_pista && spec.pista) {
         setPistaVisible(true)
       }
+      if (onDiagnostico) {
+        if (numX > spec.solucion) {
+          onDiagnostico(`x = ${numX} es demasiado grande. La balanza se inclina a la izquierda.`)
+        } else if (numX < spec.solucion) {
+          onDiagnostico(`x = ${numX} es demasiado pequeno. La balanza se inclina a la derecha.`)
+        } else if (valorX === '') {
+          onDiagnostico('Escribe un valor para x antes de verificar.')
+        }
+      }
     }
-  }, [validado, numX, spec.solucion, spec.pista, intentos, intentos_para_pista, pistaVisible, onValidado])
+  }, [validado, numX, valorX, spec.solucion, spec.pista, intentos, intentos_para_pista, pistaVisible, onValidado, onDiagnostico])
 
   // Render weight blocks for a side
   function renderPesas(items: Array<{ tipo: 'x' | 'constante'; valor: number }>, xVal: number) {
@@ -117,7 +128,7 @@ export default function Balanza({
         <div className="relative w-full max-w-sm">
           {/* Base */}
           <div className="flex justify-center">
-            <svg width="200" height="140" viewBox="0 0 200 140" className="overflow-visible">
+            <svg width="200" height="140" viewBox="0 0 200 140" className="overflow-visible" role="img" aria-label="Balanza de dos platos">
               {/* Fulcrum triangle */}
               <polygon points="100,60 85,90 115,90" fill="#6B7280" />
               {/* Base */}
@@ -211,7 +222,7 @@ export default function Balanza({
               !valorX
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 : errorFlash
-                  ? 'bg-red-500 text-white animate-[shake_0.3s_ease-in-out]'
+                  ? 'bg-amber-500 text-white animate-[shake_0.3s_ease-in-out]'
                   : 'bg-gray-900 text-white hover:bg-gray-800 active:scale-[0.98]'
             }
           `}

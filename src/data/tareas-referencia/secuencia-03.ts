@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia03: TareaCPA = {
   secuencia_ref: 3,
+  concepto_clave: 'Comparar y ordenar numeros con signo en la recta numerica',
+  contexto: {
+    personaje: 'Carlos',
+    objetos: { a: { nombre: 'temperatura', emoji: '🌡️' }, b: { nombre: 'recta', emoji: '📏' } },
+    valores_clave: { objetivo: -3 },
+    tipo: 'comparacion',
+    narrativa: 'Carlos revisa las temperaturas de diferentes ciudades y quiere ordenarlas de menor a mayor en una recta numerica.',
+    pregunta_central: '¿Donde se ubica -3 en la recta numerica?',
+    transiciones: {
+      concreto: 'Arrastra el marcador para ubicar -3 en la recta numerica.',
+      bridge_pictorico: 'Ubicaste -3 correctamente a la izquierda del cero.',
+      pictorico: 'Observa como se comparan los numeros con signo en el modelo.',
+      bridge_abstracto: 'En la recta, los numeros mas a la izquierda son menores.',
+      abstracto: 'Ahora compara y ordena numeros con signo.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'recta_numerica',
@@ -30,7 +46,8 @@ export const tareaSecuencia03: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         {
           label: 'Distancia de -3 al 0',
@@ -90,7 +107,13 @@ export const tareaSecuencia03: TareaCPA = {
         pregunta:
           'Explica con tus palabras como decides cual de dos numeros con signo es mayor usando la recta numerica. Da un ejemplo con un numero positivo y uno negativo.',
         respuesta:
-          'Para comparar dos numeros con signo, los ubico en la recta numerica. El numero que esta mas a la derecha siempre es el mayor. Por ejemplo, si comparo -2 y 3, ubico -2 a la izquierda del cero y 3 a la derecha. Como 3 esta mas a la derecha que -2, entonces 3 > -2. Esto funciona porque la recta numerica esta ordenada de menor a mayor de izquierda a derecha.',
+          'En la recta numerica, el numero que esta mas a la derecha es el mayor. Por ejemplo, 3 esta a la derecha de -2, entonces 3 > -2. Todo positivo es mayor que cualquier negativo.',
+        criterios_aceptacion: [
+          'mas a la derecha = mayor',
+          'negativos a la izquierda del cero',
+          'positivos a la derecha del cero',
+          'ejemplo correcto con un positivo y un negativo',
+        ],
       },
     ],
   },

@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia30: TareaCPA = {
   secuencia_ref: 30,
+  concepto_clave: 'Distinguir frecuencia absoluta de frecuencia relativa',
+  contexto: {
+    personaje: 'Profesor Garcia',
+    objetos: { a: { nombre: 'color', emoji: '🎨' }, b: { nombre: 'frecuencia', emoji: '📊' } },
+    valores_clave: { total: 10 },
+    tipo: 'estadistica',
+    narrativa: 'El Profesor Garcia saco 10 canicas de colores de una bolsa y quiere calcular la frecuencia de cada color.',
+    pregunta_central: '¿Cual es la frecuencia absoluta y relativa de cada color?',
+    transiciones: {
+      concreto: 'Construye el histograma con la frecuencia de cada color.',
+      bridge_pictorico: 'Contaste la frecuencia de cada color en el histograma.',
+      pictorico: 'Observa las frecuencias en el modelo.',
+      bridge_abstracto: 'Frecuencia relativa = absoluta / total.',
+      abstracto: 'Ahora calcula frecuencias en otros conjuntos.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'histograma_construible',
@@ -31,7 +47,8 @@ export const tareaSecuencia30: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         { label: 'Rojo', valor: 6, color: 'rojo' },
         { label: 'Azul', valor: 3, color: 'azul' },
@@ -78,7 +95,13 @@ export const tareaSecuencia30: TareaCPA = {
         pregunta:
           'Explica con tus palabras la diferencia entre frecuencia absoluta y frecuencia relativa, y da un ejemplo de cuando es mas util usar la relativa.',
         respuesta:
-          'La frecuencia absoluta es el numero de veces que aparece un dato (por ejemplo, 6 alumnos eligieron Rojo). La frecuencia relativa es la proporcion respecto al total (6/10 = 0.6 o 60%). La frecuencia relativa es mas util cuando queremos comparar grupos de diferente tamano. Por ejemplo, si en un grupo de 10 alumnos 6 eligieron Rojo y en otro de 100 alumnos 30 eligieron Rojo, las frecuencias absolutas son distintas (6 vs 30) pero las relativas muestran que en el primer grupo Rojo fue mas popular (60% vs 30%).',
+          'La frecuencia absoluta es cuantas veces aparece un dato (ejemplo: 6 alumnos). La frecuencia relativa es la proporcion respecto al total (6/10 = 60%). La relativa es mas util para comparar grupos de diferente tamano.',
+        criterios_aceptacion: [
+          'absoluta: numero de veces',
+          'relativa: proporcion o porcentaje',
+          'util para comparar grupos distintos',
+          'suma de relativas igual a 1',
+        ],
       },
     ],
   },

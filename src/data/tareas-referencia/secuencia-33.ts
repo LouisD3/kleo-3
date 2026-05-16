@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia33: TareaCPA = {
   secuencia_ref: 33,
+  concepto_clave: 'Identificar el espacio muestral y calcular probabilidad con una ruleta',
+  contexto: {
+    personaje: 'Pablo',
+    objetos: { a: { nombre: 'ruleta', emoji: '🎡' }, b: { nombre: 'seccion', emoji: '🔴' } },
+    valores_clave: { secciones: 4, favorables: 1 },
+    tipo: 'probabilidad',
+    narrativa: 'Pablo gira una ruleta de 4 secciones de colores y quiere saber la probabilidad de caer en rojo.',
+    pregunta_central: '¿Cual es la probabilidad de caer en la seccion roja?',
+    transiciones: {
+      concreto: 'Gira la ruleta varias veces y registra los resultados.',
+      bridge_pictorico: '1 seccion roja de 4 totales: P = 1/4.',
+      pictorico: 'Observa el espacio muestral en el modelo.',
+      bridge_abstracto: 'El espacio muestral tiene 4 resultados equiprobables.',
+      abstracto: 'Ahora identifica espacios muestrales y calcula probabilidades.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'dados_ruleta',
@@ -31,7 +47,8 @@ export const tareaSecuencia33: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         { label: 'Rojo (favorable)', valor: 1, color: 'rojo' },
         { label: 'Otros colores', valor: 3, color: 'gris' },
@@ -77,7 +94,13 @@ export const tareaSecuencia33: TareaCPA = {
         pregunta:
           'Explica con tus palabras que es el espacio muestral de un experimento aleatorio y por que es importante conocerlo antes de calcular probabilidades.',
         respuesta:
-          'El espacio muestral es el conjunto de todos los resultados posibles de un experimento aleatorio. Por ejemplo, al lanzar un dado el espacio muestral es {1, 2, 3, 4, 5, 6}. Es importante conocerlo porque la probabilidad se calcula como la razon entre los resultados favorables y el total de resultados posibles. Si no conocemos todos los resultados posibles, no podemos calcular correctamente la probabilidad. Ademas, el espacio muestral nos ayuda a verificar que no nos falte ningun resultado.',
+          'El espacio muestral es el conjunto de todos los resultados posibles. Por ejemplo, al lanzar un dado es {1, 2, 3, 4, 5, 6}. Es importante conocerlo porque la probabilidad se calcula dividiendo los resultados favorables entre el total posible.',
+        criterios_aceptacion: [
+          'todos los resultados posibles',
+          'ejemplo concreto (dado, ruleta, etc.)',
+          'necesario para calcular probabilidad',
+          'resultados favorables entre total',
+        ],
       },
     ],
   },

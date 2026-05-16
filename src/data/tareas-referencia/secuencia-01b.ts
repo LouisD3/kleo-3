@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia01b: TareaCPA = {
   secuencia_ref: 1,
+  concepto_clave: 'Encontrar fracciones equivalentes usando tiras de fracciones',
+  contexto: {
+    personaje: 'Sofia',
+    objetos: { a: { nombre: 'tira', emoji: '📏' }, b: { nombre: 'fraccion', emoji: '🔢' } },
+    valores_clave: { fraccion: '1/2' },
+    tipo: 'fraccion',
+    narrativa: 'Sofia quiere demostrar que varias fracciones representan la misma cantidad. Usa tiras de papel de colores para comparar.',
+    pregunta_central: '¿Que fracciones son equivalentes a 1/2?',
+    transiciones: {
+      concreto: 'Usa las tiras de fracciones para encontrar cuales miden lo mismo que 1/2.',
+      bridge_pictorico: 'Descubriste que 2/4 y 3/6 miden igual que 1/2. Son fracciones equivalentes.',
+      pictorico: 'Ahora observa estas equivalencias en el modelo de barras.',
+      bridge_abstracto: 'El modelo confirma que las fracciones equivalentes ocupan el mismo espacio.',
+      abstracto: 'Aplica lo aprendido para encontrar mas fracciones equivalentes.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'tiras_fracciones',
@@ -34,7 +50,8 @@ export const tareaSecuencia01b: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         { label: '1/2', valor: 1, color: 'amarillo', subdivisiones: 2 },
         { label: '2/4', valor: 1, color: 'verde', subdivisiones: 4 },
@@ -85,7 +102,13 @@ export const tareaSecuencia01b: TareaCPA = {
         pregunta:
           'Explica con tus palabras como puedes saber si dos fracciones son equivalentes. Usa lo que aprendiste con las tiras de fracciones.',
         respuesta:
-          'Dos fracciones son equivalentes cuando representan la misma cantidad, como lo vimos en las tiras: 1/2, 2/4 y 3/6 tenian la misma longitud. Para verificarlo sin tiras, puedo multiplicar o dividir el numerador y el denominador por el mismo numero. Si llego de una fraccion a la otra asi, son equivalentes. Ejemplo: 2/4 es equivalente a 1/2 porque 2 dividido entre 2 = 1, y 4 dividido entre 2 = 2.',
+          'Dos fracciones son equivalentes cuando representan la misma cantidad. En las tiras, 1/2, 2/4 y 3/6 tenian la misma longitud. Para verificarlo, multiplico o divido el numerador y el denominador por el mismo numero.',
+        criterios_aceptacion: [
+          'misma cantidad',
+          'multiplicar o dividir numerador y denominador por el mismo numero',
+          'ejemplo correcto de fracciones equivalentes',
+          'referencia a las tiras o al modelo visual',
+        ],
       },
     ],
   },

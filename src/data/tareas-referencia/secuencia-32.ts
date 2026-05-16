@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia32: TareaCPA = {
   secuencia_ref: 32,
+  concepto_clave: 'Calcular la probabilidad teorica de un evento con un dado',
+  contexto: {
+    personaje: 'Pablo',
+    objetos: { a: { nombre: 'dado', emoji: '🎲' }, b: { nombre: 'probabilidad', emoji: '🔢' } },
+    valores_clave: { caras: 6, favorables: 3 },
+    tipo: 'probabilidad',
+    narrativa: 'Pablo lanza un dado y quiere calcular la probabilidad de sacar un numero par (2, 4 o 6).',
+    pregunta_central: '¿Cual es la probabilidad de sacar un numero par?',
+    transiciones: {
+      concreto: 'Lanza el dado varias veces y observa los resultados.',
+      bridge_pictorico: 'De 6 caras, 3 son pares: la probabilidad es 3/6 = 1/2.',
+      pictorico: 'Observa los casos favorables vs totales en el modelo.',
+      bridge_abstracto: 'P(evento) = casos favorables / casos totales.',
+      abstracto: 'Ahora calcula probabilidades en otros experimentos.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'dados_ruleta',
@@ -26,7 +42,8 @@ export const tareaSecuencia32: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         { label: 'Favorables (par)', valor: 3, color: 'verde' },
         { label: 'No favorables (impar)', valor: 3, color: 'rojo' },
@@ -45,9 +62,10 @@ export const tareaSecuencia32: TareaCPA = {
       {
         pregunta:
           'Compara la probabilidad teorica (3/6) con los resultados de tus lanzamientos. Fueron iguales? Explica por que pueden ser diferentes.',
-        tipo: 'calculo',
+        tipo: 'abierta',
         respuesta:
-          'La probabilidad teorica es 3/6 = 1/2 = 0.5, es decir, esperamos que la mitad de los lanzamientos sean pares. En la practica, los resultados pueden ser diferentes porque cada lanzamiento es aleatorio. Con pocos lanzamientos (10), es normal que la frecuencia relativa no coincida exactamente con la probabilidad teorica. Con mas lanzamientos, los resultados se acercan mas a la probabilidad teorica.',
+          'La probabilidad teórica es 3/6 = 1/2, así que esperamos pares la mitad del tiempo. Con solo 10 lanzamientos, el resultado real puede ser diferente porque cada tiro es aleatorio.',
+        criterios_aceptacion: ['probabilidad teórica 3/6 o 1/2', 'resultados reales pueden variar', 'causa: azar o aleatoriedad', 'más lanzamientos acercan al teórico'],
       },
     ],
   },
@@ -72,7 +90,8 @@ export const tareaSecuencia32: TareaCPA = {
         pregunta:
           'Explica con tus palabras la diferencia entre probabilidad teorica y frecuencia relativa experimental. Por que no siempre coinciden?',
         respuesta:
-          'La probabilidad teorica se calcula dividiendo los resultados favorables entre los resultados posibles, sin necesidad de hacer el experimento. La frecuencia relativa experimental se obtiene al realizar el experimento y dividir las veces que ocurrio el evento entre el total de intentos. No siempre coinciden porque los resultados reales dependen del azar. Sin embargo, si repetimos el experimento muchas veces, la frecuencia relativa se acerca cada vez mas a la probabilidad teorica. Esto se conoce como la ley de los grandes numeros.',
+          'La probabilidad teórica se calcula sin experimentar (favorables ÷ posibles). La frecuencia experimental se mide haciendo el experimento. No coinciden siempre porque el azar es impredecible, pero con muchos intentos se acercan.',
+        criterios_aceptacion: ['probabilidad teórica sin experimento', 'frecuencia experimental con experimento', 'diferencia por azar', 'ley de grandes números o más intentos'],
       },
     ],
   },

@@ -1,7 +1,7 @@
 import type { TareaCPA } from '@/types/tarea-cpa'
 
 /**
- * Tarea de referencia — Secuencia 6: Multiplicacion y division
+ * Tarea de referencia — Secuencia 6: Suma y resta de enteros
  * Concepto clave: Operar con numeros positivos y negativos usando fichas
  *
  * Concreto: FichasPositivasNegativas (5 positivas + 8 negativas, cancelar pares, resultado -3)
@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia06: TareaCPA = {
   secuencia_ref: 6,
+  concepto_clave: 'Operar con numeros positivos y negativos usando fichas',
+  contexto: {
+    personaje: 'Carlos',
+    objetos: { a: { nombre: 'ficha positiva', emoji: '🟢' }, b: { nombre: 'ficha negativa', emoji: '🔴' } },
+    valores_clave: { positivas: 5, negativas: 8, resultado: -3 },
+    tipo: 'numero',
+    narrativa: 'Carlos practica operaciones con enteros. Tiene 5 fichas positivas y 8 negativas y quiere saber el resultado.',
+    pregunta_central: '¿Que numero resulta al combinar (+5) y (-8)?',
+    transiciones: {
+      concreto: 'Cancela pares de fichas positivas y negativas para encontrar el resultado.',
+      bridge_pictorico: 'Al cancelar 4 pares, quedan 3 fichas negativas. Resultado: -3.',
+      pictorico: 'Observa la operacion en el modelo.',
+      bridge_abstracto: 'Cuando hay mas negativas que positivas, el resultado es negativo.',
+      abstracto: 'Ahora opera con enteros en diferentes situaciones.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'fichas_positivas_negativas',
@@ -23,7 +39,8 @@ export const tareaSecuencia06: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         { label: 'Fichas positivas', valor: 5, color: 'verde', subdivisiones: 5 },
         { label: 'Fichas negativas', valor: 8, color: 'rojo', subdivisiones: 8 },
@@ -68,7 +85,13 @@ export const tareaSecuencia06: TareaCPA = {
         pregunta:
           'Explica con tus palabras por que cancelar una ficha positiva con una negativa da cero. Usa un ejemplo de la vida real.',
         respuesta:
-          'Una ficha positiva y una negativa se cancelan porque representan cantidades opuestas: +1 y -1 suman 0. Es como si debes $1 a un amigo y el te debe $1 a ti: las deudas se cancelan y nadie debe nada. En la vida real, si ganas $5 y gastas $5, tu balance es $0. Cada gasto cancela una ganancia.',
+          '+1 y -1 son opuestos y juntos suman cero. Es como ganar $5 y gastar $5: el balance queda en $0. Por eso cada par positivo-negativo se cancela.',
+        criterios_aceptacion: [
+          'opuestos que suman cero',
+          'ejemplo de la vida real',
+          'balance o resultado final cero',
+          '+1 + (-1) = 0',
+        ],
       },
     ],
   },

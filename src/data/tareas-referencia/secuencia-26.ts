@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia26: TareaCPA = {
   secuencia_ref: 26,
+  concepto_clave: 'La distancia de un punto a una recta es la perpendicular mas corta',
+  contexto: {
+    personaje: 'Roberto',
+    objetos: { a: { nombre: 'punto', emoji: '📍' }, b: { nombre: 'recta', emoji: '📏' } },
+    valores_clave: { distancia_perpendicular: 2, distancia_oblicua: 3 },
+    tipo: 'geometria',
+    narrativa: 'Roberto busca el camino mas corto desde un punto hasta una recta. Descubre que siempre es la perpendicular.',
+    pregunta_central: '¿Cual es la distancia mas corta de un punto a una recta?',
+    transiciones: {
+      concreto: 'Traza el punto y la recta en el geoplano. Observa las distancias.',
+      bridge_pictorico: 'La perpendicular (2 u) es mas corta que cualquier oblicua (3 u).',
+      pictorico: 'Compara las distancias en el modelo.',
+      bridge_abstracto: 'La distancia punto-recta es siempre la perpendicular.',
+      abstracto: 'Ahora calcula distancias punto-recta.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'geoplano',
@@ -30,13 +46,26 @@ export const tareaSecuencia26: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
-      barras: [
-        { label: 'Perpendicular', valor: 2, color: 'verde' },
-        { label: 'Oblicua', valor: 3, color: 'rojo' },
+    representacion: {
+      tipo_representacion: 'diagrama_geometrico',
+      ancho: 6,
+      alto: 5,
+      puntos: [
+        { id: 'l1', x: 0, y: 1 },
+        { id: 'l2', x: 6, y: 1 },
+        { id: 'p', x: 2, y: 3, label: 'P' },
+        { id: 'h', x: 2, y: 1, label: 'H' },
+        { id: 'q', x: 4, y: 1, label: 'Q' },
       ],
-      total: { valor: 3, visible: false },
-      orientacion: 'horizontal',
+      segmentos: [
+        { tipo: 'recta', desde: 'l1', hasta: 'l2', color: 'gris', label: 'Recta L' },
+        { tipo: 'segmento', desde: 'p', hasta: 'h', color: 'verde', medida: '2 u', label: 'Perpendicular' },
+        { tipo: 'segmento', desde: 'p', hasta: 'q', color: 'rojo', medida: '≈3 u', label: 'Oblicua', estilo: 'punteado' },
+      ],
+      angulos: [
+        { vertice: 'h', lado_a: 'l2', lado_b: 'p', medida: '90°', color: 'verde' },
+      ],
+      titulo: 'Distancia punto-recta: perpendicular (2 u) vs oblicua (≈3 u)',
     },
     preguntas: [
       {
@@ -54,9 +83,10 @@ export const tareaSecuencia26: TareaCPA = {
       {
         pregunta:
           'Usando el modelo, explica por que la distancia de un punto a una recta siempre se mide con la perpendicular.',
-        tipo: 'calculo',
+        tipo: 'abierta',
         respuesta:
-          'La distancia se define como la longitud mas corta entre el punto y la recta. El segmento perpendicular es siempre el mas corto porque forma un angulo de 90 grados con la recta. Cualquier otro segmento oblicuo es mas largo, ya que la hipotenusa de un triangulo rectangulo siempre es mayor que sus catetos.',
+          'La perpendicular es el segmento mas corto porque forma 90° con la recta. Cualquier oblicua es mas larga (es la hipotenusa de un triangulo rectangulo).',
+        criterios_aceptacion: ['perpendicular es la mas corta', 'angulo de 90 grados', 'oblicua mas larga', 'triangulo rectangulo o hipotenusa'],
       },
     ],
   },
@@ -81,7 +111,13 @@ export const tareaSecuencia26: TareaCPA = {
         pregunta:
           'Un punto esta a la misma distancia de dos rectas paralelas. Donde se encuentra ese punto? Explica tu razonamiento.',
         respuesta:
-          'El punto se encuentra exactamente en la recta que esta a la mitad entre las dos rectas paralelas. Si las rectas paralelas estan en y = 1 y y = 6, el punto equidistante esta en y = 3.5 porque 3.5 - 1 = 2.5 y 6 - 3.5 = 2.5. Este lugar geometrico es otra recta paralela a las dos originales, ubicada justo a la mitad.',
+          'Ese punto esta exactamente a la mitad entre las dos rectas paralelas, sobre una tercera recta paralela a ellas. Por ejemplo, si las rectas estan en y = 1 y y = 6, el punto equidistante esta en y = 3.5.',
+        criterios_aceptacion: [
+          'a la mitad entre las dos rectas',
+          'tercera recta paralela',
+          'misma distancia a ambas',
+          'lugar geometrico',
+        ],
       },
     ],
   },

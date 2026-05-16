@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia25: TareaCPA = {
   secuencia_ref: 25,
+  concepto_clave: 'La distancia entre dos puntos es la longitud del segmento que los une',
+  contexto: {
+    personaje: 'Roberto',
+    objetos: { a: { nombre: 'punto', emoji: '📍' }, b: { nombre: 'distancia', emoji: '📏' } },
+    valores_clave: { horizontal: 4, vertical: 3, distancia: 5 },
+    tipo: 'geometria',
+    narrativa: 'Roberto quiere calcular la distancia entre dos puntos en un plano. Usa un triangulo rectangulo imaginario para encontrarla.',
+    pregunta_central: '¿Cual es la distancia entre (0,0) y (4,3)?',
+    transiciones: {
+      concreto: 'Traza los dos puntos en el geoplano y observa el triangulo rectangulo.',
+      bridge_pictorico: 'El cateto horizontal mide 4 y el vertical 3.',
+      pictorico: 'Observa los componentes horizontal y vertical en el modelo.',
+      bridge_abstracto: 'd = √(4² + 3²) = √25 = 5.',
+      abstracto: 'Ahora calcula distancias entre puntos.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'geoplano',
@@ -29,14 +45,27 @@ export const tareaSecuencia25: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
-      barras: [
-        { label: 'Horizontal', valor: 4, color: 'azul' },
-        { label: 'Vertical', valor: 3, color: 'verde' },
+    representacion: {
+      tipo_representacion: 'diagrama_geometrico',
+      ancho: 6,
+      alto: 5,
+      puntos: [
+        { id: 'a', x: 0, y: 0, label: 'A(0,0)' },
+        { id: 'b', x: 4, y: 3, label: 'B(4,3)' },
+        { id: 'c', x: 4, y: 0, label: 'C' },
       ],
-      total: { valor: 5, visible: true },
-      incognita: { posicion: 'total', label: 'Distancia = ?' },
-      orientacion: 'horizontal',
+      segmentos: [
+        { tipo: 'segmento', desde: 'a', hasta: 'c', color: 'azul', medida: '4 u', label: 'Horizontal' },
+        { tipo: 'segmento', desde: 'c', hasta: 'b', color: 'verde', medida: '3 u', label: 'Vertical' },
+        { tipo: 'segmento', desde: 'a', hasta: 'b', color: 'rojo', medida: 'd = ?', label: 'Distancia' },
+      ],
+      angulos: [
+        { vertice: 'c', lado_a: 'a', lado_b: 'b', medida: '90°', color: 'gris' },
+      ],
+      poligonos: [
+        { puntos: ['a', 'c', 'b'], relleno: 'azul', opacidad: 0.06 },
+      ],
+      titulo: 'Triangulo rectangulo: catetos 4 y 3, hipotenusa = distancia',
     },
     preguntas: [
       {
@@ -49,9 +78,10 @@ export const tareaSecuencia25: TareaCPA = {
       {
         pregunta:
           'Usando el modelo, explica como se calcula la distancia entre dos puntos cuando conoces el desplazamiento horizontal y vertical.',
-        tipo: 'calculo',
+        tipo: 'abierta',
         respuesta:
-          'Se forma un triangulo rectangulo donde los catetos son las distancias horizontal y vertical. Se aplica el teorema de Pitagoras: distancia = raiz cuadrada de (horizontal al cuadrado + vertical al cuadrado). Con catetos 4 y 3: distancia = raiz de (16 + 9) = raiz de 25 = 5.',
+          'Se forma un triangulo rectangulo con los catetos horizontal y vertical. Se aplica Pitagoras: d = raiz de (4² + 3²) = raiz de 25 = 5.',
+        criterios_aceptacion: ['triangulo rectangulo', 'teorema de Pitagoras', 'catetos horizontal y vertical', 'raiz cuadrada'],
       },
     ],
   },
@@ -76,7 +106,13 @@ export const tareaSecuencia25: TareaCPA = {
         pregunta:
           'Por que no podemos simplemente sumar las distancias horizontal y vertical para obtener la distancia real entre dos puntos? Explica con un ejemplo.',
         respuesta:
-          'Si sumamos horizontal + vertical obtenemos la distancia caminando por las calles (como en cuadricula), no en linea recta. Por ejemplo, de (0,0) a (3,4): horizontal + vertical = 3 + 4 = 7, pero la distancia real es 5 (linea recta). La linea recta siempre es mas corta que el recorrido por las orillas, por eso usamos el teorema de Pitagoras en lugar de sumar.',
+          'Sumar horizontal y vertical da la distancia caminando por las calles, no en linea recta. Por ejemplo, de (0,0) a (3,4) la suma da 7, pero la distancia real es 5. La linea recta siempre es mas corta, por eso usamos el teorema de Pitagoras.',
+        criterios_aceptacion: [
+          'linea recta mas corta',
+          'teorema de Pitagoras',
+          'no es sumar los catetos',
+          'ejemplo concreto con numeros',
+        ],
       },
     ],
   },

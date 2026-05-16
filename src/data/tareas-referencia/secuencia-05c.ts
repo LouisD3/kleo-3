@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia05c: TareaCPA = {
   secuencia_ref: 5,
+  concepto_clave: 'Restar como operacion inversa de la suma',
+  contexto: {
+    personaje: 'Diego',
+    objetos: { a: { nombre: 'bloque', emoji: '🧱' }, b: { nombre: 'resta', emoji: '➖' } },
+    valores_clave: { objetivo: 87 },
+    tipo: 'numero',
+    narrativa: 'Diego quiere restar 235 - 148 usando bloques de base 10. A veces necesita desagrupar.',
+    pregunta_central: '¿Cuanto es 235 - 148?',
+    transiciones: {
+      concreto: 'Quita bloques para restar. Desagrupa si necesitas mas unidades.',
+      bridge_pictorico: '235 - 148 = 87. Tuviste que desagrupar una decena.',
+      pictorico: 'Observa la resta en el modelo de barras.',
+      bridge_abstracto: 'Restar es la operacion inversa de sumar.',
+      abstracto: 'Ahora resta otros numeros.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'bloques_base10',
@@ -24,7 +40,8 @@ export const tareaSecuencia05c: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         { label: 'Vendidos', valor: 148, color: 'rojo', subdivisiones: 1 },
         { label: 'Quedan', valor: 87, color: 'verde', subdivisiones: 1 },
@@ -69,7 +86,13 @@ export const tareaSecuencia05c: TareaCPA = {
         pregunta:
           'Explica con tus palabras por que la resta es la operacion inversa de la suma. Usa un ejemplo con numeros para demostrarlo.',
         respuesta:
-          'La resta es la operacion inversa de la suma porque deshace lo que la suma hace. Si sumo dos numeros y obtengo un resultado, al restar uno de esos numeros al resultado, recupero el otro. Por ejemplo: 148 + 87 = 235. Si ahora resto 148 del resultado: 235 - 148 = 87, regreso al otro numero. Siempre que a + b = c, entonces c - a = b y c - b = a. Son operaciones que se "cancelan" mutuamente.',
+          'La resta deshace lo que la suma hace. Si 148 + 87 = 235, entonces 235 - 148 = 87. Si a + b = c, siempre podemos recuperar un sumando restando el otro al resultado.',
+        criterios_aceptacion: [
+          'operacion inversa',
+          'deshace la suma',
+          'ejemplo numerico correcto',
+          'relacion a + b = c implica c - a = b',
+        ],
       },
     ],
   },

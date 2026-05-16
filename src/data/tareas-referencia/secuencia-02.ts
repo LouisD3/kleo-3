@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia02: TareaCPA = {
   secuencia_ref: 2,
+  concepto_clave: 'Representar numeros positivos y negativos',
+  contexto: {
+    personaje: 'Carlos',
+    objetos: { a: { nombre: 'ficha positiva', emoji: '🟢' }, b: { nombre: 'ficha negativa', emoji: '🔴' } },
+    valores_clave: { positivas: 5, negativas: 3, resultado: 2 },
+    tipo: 'numero',
+    narrativa: 'Carlos tiene fichas verdes (+) y rojas (-). Quiere entender como se combinan numeros positivos y negativos usando fichas que se cancelan.',
+    pregunta_central: '¿Que numero resulta al combinar 5 fichas positivas y 3 negativas?',
+    transiciones: {
+      concreto: 'Usa las fichas de Carlos para cancelar pares positivo-negativo y encontrar el resultado.',
+      bridge_pictorico: 'Al cancelar 3 pares, quedan 2 fichas positivas. El resultado es +2.',
+      pictorico: 'Observa como se representa esta operacion en el modelo.',
+      bridge_abstracto: 'El modelo muestra que (+5) + (-3) = +2.',
+      abstracto: 'Ahora opera con numeros positivos y negativos sin fichas.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'fichas_positivas_negativas',
@@ -24,7 +40,8 @@ export const tareaSecuencia02: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         {
           label: 'Positivas',
@@ -39,7 +56,7 @@ export const tareaSecuencia02: TareaCPA = {
           subdivisiones: 3,
         },
       ],
-      total: { valor: 2, visible: true },
+      incognita: { posicion: 'total', label: 'Resultado = ?' },
       orientacion: 'horizontal',
     },
     preguntas: [
@@ -80,7 +97,13 @@ export const tareaSecuencia02: TareaCPA = {
         pregunta:
           'Explica con tus palabras por que al cancelar fichas positivas con negativas obtenemos el resultado de una suma de numeros con signo. Usa el ejemplo de las 5 fichas positivas y 3 negativas.',
         respuesta:
-          'Cuando tenemos fichas positivas y negativas, cada par de una positiva con una negativa se cancela porque representan valores opuestos (+1 y -1 suman 0). Al cancelar 3 pares de las 5 positivas y 3 negativas, quedan 2 fichas positivas sin cancelar. Por eso (+5) + (-3) = +2. Las fichas nos ayudan a ver que sumar un numero negativo es como quitar fichas positivas.',
+          'Cada par de una ficha positiva y una negativa se cancela porque +1 y -1 suman 0. Con 5 positivas y 3 negativas, se cancelan 3 pares y quedan 2 positivas: (+5) + (-3) = +2.',
+        criterios_aceptacion: [
+          '+1 y -1 suman cero',
+          'cancelar pares',
+          'fichas sobrantes = resultado',
+          'ejemplo con numeros correctos',
+        ],
       },
     ],
   },

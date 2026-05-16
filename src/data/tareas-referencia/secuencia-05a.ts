@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia05a: TareaCPA = {
   secuencia_ref: 5,
+  concepto_clave: 'Descomponer un numero en centenas, decenas y unidades',
+  contexto: {
+    personaje: 'Diego',
+    objetos: { a: { nombre: 'bloque', emoji: '🧱' }, b: { nombre: 'numero', emoji: '🔢' } },
+    valores_clave: { objetivo: 235 },
+    tipo: 'numero',
+    narrativa: 'Diego usa bloques de base 10 para entender como se descompone un numero en centenas, decenas y unidades.',
+    pregunta_central: '¿Como se descompone 235 en bloques de base 10?',
+    transiciones: {
+      concreto: 'Usa los bloques para representar 235: cuadrados de 100, barras de 10 y unidades.',
+      bridge_pictorico: '235 = 2 centenas + 3 decenas + 5 unidades.',
+      pictorico: 'Observa la descomposicion en el modelo de barras.',
+      bridge_abstracto: 'Cada posicion tiene un valor: centenas, decenas, unidades.',
+      abstracto: 'Ahora descompone otros numeros.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'bloques_base10',
@@ -24,7 +40,8 @@ export const tareaSecuencia05a: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         { label: 'Centenas', valor: 200, color: 'azul', subdivisiones: 2 },
         { label: 'Decenas', valor: 30, color: 'verde', subdivisiones: 3 },
@@ -75,7 +92,13 @@ export const tareaSecuencia05a: TareaCPA = {
         pregunta:
           'Explica con tus palabras por que nuestro sistema numerico se llama "base 10". Usa un ejemplo con un numero de tres cifras.',
         respuesta:
-          'Nuestro sistema se llama base 10 porque cada posicion vale 10 veces mas que la posicion anterior. Las unidades valen 1, las decenas valen 10 (10 veces 1) y las centenas valen 100 (10 veces 10). Por ejemplo, en el numero 235, el 2 vale 200 porque esta en la posicion de las centenas, el 3 vale 30 porque esta en las decenas, y el 5 vale 5 porque esta en las unidades. Cada vez que nos movemos una posicion a la izquierda, multiplicamos por 10.',
+          'Se llama base 10 porque cada posicion vale 10 veces mas que la anterior: unidades (1), decenas (10), centenas (100). En 235, el 2 vale 200, el 3 vale 30 y el 5 vale 5.',
+        criterios_aceptacion: [
+          'cada posicion vale 10 veces mas',
+          'unidades, decenas, centenas',
+          'ejemplo con numero de tres cifras',
+          'descomposicion correcta',
+        ],
       },
     ],
   },

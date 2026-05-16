@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia13b: TareaCPA = {
   secuencia_ref: 13,
+  concepto_clave: 'Calcular un descuento con porcentajes usando la cuadricula de 100',
+  contexto: {
+    personaje: 'Laura',
+    objetos: { a: { nombre: 'producto', emoji: '🏷️' }, b: { nombre: 'descuento', emoji: '💰' } },
+    valores_clave: { porcentaje: 20, precio: 500 },
+    tipo: 'porcentaje',
+    narrativa: 'Laura quiere comprar unos tenis de $500 que tienen 20% de descuento. Necesita calcular cuanto ahorra.',
+    pregunta_central: '¿Cuanto paga Laura con el 20% de descuento?',
+    transiciones: {
+      concreto: 'Colorea 20 de 100 cuadritos para ver cuanto representa el descuento.',
+      bridge_pictorico: '20% de 500 = $100 de descuento. Paga $400.',
+      pictorico: 'Observa el descuento en el modelo de barras.',
+      bridge_abstracto: 'Descuento = precio × porcentaje / 100.',
+      abstracto: 'Ahora calcula descuentos y aumentos.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'cuadricula_100',
@@ -21,7 +37,8 @@ export const tareaSecuencia13b: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         { label: 'Descuento (20%)', valor: 20, color: 'rojo', subdivisiones: 4 },
         { label: 'Lo que pagas (80%)', valor: 80, color: 'verde', subdivisiones: 16 },
@@ -67,7 +84,14 @@ export const tareaSecuencia13b: TareaCPA = {
         pregunta:
           'Si un producto tiene primero un descuento de 20% y luego otro descuento de 20%, es lo mismo que un descuento de 40%? Explica usando numeros.',
         respuesta:
-          'No es lo mismo. Ejemplo: un producto de $100 con 20% de descuento queda en $80. Luego otro 20% de descuento se aplica sobre $80 (no sobre $100): 20% de $80 = $16, entonces queda en $64. Con 40% de descuento directo: 40% de $100 = $40, quedaria en $60. $64 no es igual a $60. El segundo descuento se calcula sobre un precio ya rebajado.',
+          'No es lo mismo. Con $100 y 20% de descuento queda en $80. El segundo 20% se aplica sobre $80: $80 - $16 = $64. Con 40% directo quedaria en $60. Son resultados diferentes.',
+        criterios_aceptacion: [
+          'respuesta negativa',
+          'segundo descuento sobre precio ya rebajado',
+          'calculo correcto de los dos pasos',
+          'comparacion con descuento directo de 40%',
+          'resultados $64 vs $60',
+        ],
       },
     ],
   },

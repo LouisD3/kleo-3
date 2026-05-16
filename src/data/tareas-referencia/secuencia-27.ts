@@ -4,39 +4,63 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  * Tarea de referencia — Secuencia 27: Desigualdad triangular
  * Concepto clave: La suma de dos lados de un triangulo siempre es mayor que el tercero
  *
- * Concreto: Geoplano 5x5 — trazar un triangulo valido
- * Pictorico: Modelo en barras — comparar suma de dos lados vs tercer lado
+ * Concreto: Varillas triangulo — ajustar 3 lados y verificar desigualdad triangular
+ * Pictorico: Tabla — verificacion de las 3 condiciones de desigualdad triangular
  * Abstracto: 3 preguntas con progresion de dificultad sobre desigualdad triangular
  */
 export const tareaSecuencia27: TareaCPA = {
   secuencia_ref: 27,
+  concepto_clave: 'La suma de dos lados de un triangulo siempre es mayor que el tercero',
+  contexto: {
+    personaje: 'Elena',
+    objetos: { a: { nombre: 'varilla', emoji: '🪵' }, b: { nombre: 'triangulo', emoji: '🔺' } },
+    valores_clave: { lados: [4, 3, 3] },
+    tipo: 'geometria',
+    narrativa: 'Elena tiene 3 varillas y quiere saber si puede formar un triangulo. Descubre que la suma de dos lados siempre debe ser mayor que el tercero.',
+    pregunta_central: '¿Se puede formar un triangulo con lados de 4, 3 y 3?',
+    transiciones: {
+      concreto: 'Ajusta las varillas para que midan 4, 3 y 3. Observa si se forma un triangulo.',
+      bridge_pictorico: 'El triangulo se forma porque 3+3=6 > 4, 4+3=7 > 3.',
+      pictorico: 'Verifica las 3 condiciones de desigualdad en la tabla.',
+      bridge_abstracto: 'Para formar triangulo: a+b > c, a+c > b, b+c > a.',
+      abstracto: 'Ahora verifica si otras medidas forman triangulos.',
+    },
+  },
   concreto: {
     manipulable: {
-      tipo_concreto: 'geoplano',
-      filas: 5,
-      columnas: 5,
-      figura_objetivo: [
-        [0, 0],
-        [4, 0],
-        [2, 3],
-      ],
+      tipo_concreto: 'varillas_triangulo',
+      lado_a: 4,
+      lado_b: 3,
+      lado_c: 3,
+      max_longitud: 10,
+      forma_triangulo: true,
       pregunta:
-        'Traza un triangulo en el geoplano conectando los puntos (0,0), (4,0) y (2,3).',
+        'Ajusta las varillas para que midan a=4, b=3 y c=3. Observa si se puede formar un triangulo y verifica la desigualdad triangular.',
       pista:
-        'Conecta los tres puntos para formar un triangulo. Asegurate de que los tres lados esten bien trazados y que los puntos no esten alineados.',
+        'Para formar un triangulo, la suma de dos lados cualesquiera debe ser mayor que el tercero: 3+3=6 > 4, 4+3=7 > 3.',
     },
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
-      barras: [
-        { label: 'Lado a', valor: 4, color: 'azul' },
-        { label: 'Lado b', valor: 3, color: 'verde' },
-        { label: 'Lado c', valor: 3, color: 'rojo' },
+    representacion: {
+      tipo_representacion: 'tabla',
+      columnas: [
+        { key: 'condicion', header: 'Condicion' },
+        { key: 'suma', header: 'Suma de dos lados' },
+        { key: 'tercer_lado', header: 'Tercer lado' },
+        { key: 'cumple', header: 'Suma > tercer lado?' },
       ],
-      total: { valor: 4, visible: true },
-      incognita: { posicion: 'total', label: 'Lado mayor = ?' },
-      orientacion: 'horizontal',
+      filas: [
+        { condicion: 'a + b > c', suma: '4 + 3 = 7', tercer_lado: '3', cumple: 'Si (7 > 3)' },
+        { condicion: 'a + c > b', suma: '4 + 3 = 7', tercer_lado: '3', cumple: 'Si (7 > 3)' },
+        { condicion: 'b + c > a', suma: '3 + 3 = 6', tercer_lado: '4', cumple: 'Si (6 > 4)' },
+      ],
+      resaltados: [
+        { fila: 0, columna: 'cumple', color: '#10B981' },
+        { fila: 1, columna: 'cumple', color: '#10B981' },
+        { fila: 2, columna: 'cumple', color: '#10B981' },
+      ],
+      titulo: 'Verificacion de la desigualdad triangular (lados: 4, 3, 3)',
     },
     preguntas: [
       {
@@ -54,9 +78,10 @@ export const tareaSecuencia27: TareaCPA = {
       {
         pregunta:
           'Usando el modelo, explica que debe cumplirse con las longitudes de los tres lados para que se pueda formar un triangulo.',
-        tipo: 'calculo',
+        tipo: 'abierta',
         respuesta:
           'Para formar un triangulo, la suma de cualesquiera dos lados debe ser mayor que el tercer lado. En el modelo: a + b = 4 + 3 = 7 > 3 (lado c), a + c = 4 + 3 = 7 > 3 (lado b), y b + c = 3 + 3 = 6 > 4 (lado a). Las tres condiciones se cumplen, entonces si se puede formar el triangulo.',
+        criterios_aceptacion: ['suma de dos lados mayor que el tercero', 'verificar las 3 combinaciones', 'se cumple la desigualdad triangular'],
       },
     ],
   },
@@ -86,7 +111,13 @@ export const tareaSecuencia27: TareaCPA = {
         pregunta:
           'Imagina que tienes tres varillas de 5, 5 y 10 cm. Puedes formar un triangulo? Explica que pasa en el caso limite cuando la suma de dos lados es igual al tercero.',
         respuesta:
-          'No se puede formar un triangulo porque 5 + 5 = 10, que es igual al tercer lado, no mayor. En este caso limite, las tres varillas quedarian alineadas formando un segmento recto, no un triangulo. La desigualdad triangular exige que la suma sea estrictamente mayor, no solo igual. Cuando la suma es exactamente igual, la figura se "aplasta" y no hay area interior.',
+          'No se puede formar un triangulo porque 5 + 5 = 10, que es igual al tercer lado, no mayor. En el caso limite las varillas quedan alineadas formando una linea recta, no un triangulo. La suma debe ser estrictamente mayor.',
+        criterios_aceptacion: [
+          '5 + 5 = 10 no es mayor',
+          'quedan alineadas o en linea recta',
+          'no hay triangulo',
+          'la suma debe ser estrictamente mayor',
+        ],
       },
     ],
   },

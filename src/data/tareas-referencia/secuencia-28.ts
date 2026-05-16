@@ -5,11 +5,27 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  * Concepto clave: Calcular perimetro y area de poligonos
  *
  * Concreto: Geoplano 5x5 — trazar un rectangulo 4x3, area = 12
- * Pictorico: Modelo en barras — largo y ancho del rectangulo
+ * Pictorico: Diagrama geometrico — rectangulo 4×3 annote avec cuadricula unitaire
  * Abstracto: 3 preguntas con progresion de dificultad sobre perimetro y area
  */
 export const tareaSecuencia28: TareaCPA = {
   secuencia_ref: 28,
+  concepto_clave: 'Calcular perimetro y area de poligonos',
+  contexto: {
+    personaje: 'Roberto',
+    objetos: { a: { nombre: 'terreno', emoji: '🏗️' }, b: { nombre: 'medida', emoji: '📏' } },
+    valores_clave: { largo: 4, ancho: 3, area: 12, perimetro: 14 },
+    tipo: 'medicion',
+    narrativa: 'Roberto necesita calcular el perimetro (para la cerca) y el area (para el pasto) de un terreno rectangular de 4×3.',
+    pregunta_central: '¿Cual es el perimetro y el area de un rectangulo 4×3?',
+    transiciones: {
+      concreto: 'Traza el rectangulo en el geoplano y calcula su area.',
+      bridge_pictorico: 'El rectangulo tiene 12 unidades cuadradas de area.',
+      pictorico: 'Observa el rectangulo con sus medidas y la cuadricula en el diagrama.',
+      bridge_abstracto: 'P = 2(4+3) = 14, A = 4×3 = 12. Perimetro es contorno, area es superficie.',
+      abstracto: 'Ahora calcula perimetros y areas de otros poligonos.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'geoplano',
@@ -31,19 +47,35 @@ export const tareaSecuencia28: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
-      barras: [
-        { label: 'Largo', valor: 4, color: 'azul' },
-        { label: 'Ancho', valor: 3, color: 'verde' },
+    representacion: {
+      tipo_representacion: 'diagrama_geometrico',
+      ancho: 6,
+      alto: 5,
+      puntos: [
+        { id: 'a', x: 1, y: 1, label: 'A' },
+        { id: 'b', x: 5, y: 1, label: 'B' },
+        { id: 'c', x: 5, y: 4, label: 'C' },
+        { id: 'd', x: 1, y: 4, label: 'D' },
       ],
-      total: { valor: 12, visible: true },
-      incognita: { posicion: 'total', label: 'Area = ?' },
-      orientacion: 'horizontal',
+      segmentos: [
+        { tipo: 'segmento', desde: 'a', hasta: 'b', color: 'azul', medida: '4 u' },
+        { tipo: 'segmento', desde: 'b', hasta: 'c', color: 'verde', medida: '3 u' },
+        { tipo: 'segmento', desde: 'c', hasta: 'd', color: 'azul', medida: '4 u' },
+        { tipo: 'segmento', desde: 'd', hasta: 'a', color: 'verde', medida: '3 u' },
+      ],
+      angulos: [
+        { vertice: 'a', lado_a: 'b', lado_b: 'd', medida: '90°', color: 'gris' },
+      ],
+      poligonos: [
+        { puntos: ['a', 'b', 'c', 'd'], relleno: 'azul', opacidad: 0.1 },
+      ],
+      cuadricula: { filas: 3, columnas: 4, celdas_resaltadas: [], color_resaltado: '#3B82F6' },
+      titulo: 'Rectangulo 4×3 — Perimetro = 2(4+3) = 14 u, Area = 4×3 = ?',
     },
     preguntas: [
       {
         pregunta:
-          'Observa el modelo de barras. Si el largo es 4 y el ancho es 3, cual es el area del rectangulo?',
+          'Observa el diagrama. Si el largo es 4 y el ancho es 3, cual es el area del rectangulo?',
         tipo: 'opcion_multiple',
         opciones: ['A) 7', 'B) 12', 'C) 14', 'D) 16'],
         respuesta: 'B',
@@ -51,9 +83,10 @@ export const tareaSecuencia28: TareaCPA = {
       {
         pregunta:
           'Usando el modelo, explica la diferencia entre perimetro y area del rectangulo de 4x3.',
-        tipo: 'calculo',
+        tipo: 'abierta',
         respuesta:
-          'El perimetro es la suma de todos los lados: P = 2 x (largo + ancho) = 2 x (4 + 3) = 2 x 7 = 14 unidades. El area es el espacio interior: A = largo x ancho = 4 x 3 = 12 unidades cuadradas. El perimetro mide el contorno y el area mide la superficie.',
+          'El perímetro mide el contorno: P = 2×(4+3) = 14 unidades. El área mide el espacio interior: A = 4×3 = 12 unidades cuadradas.',
+        criterios_aceptacion: ['perímetro es el contorno', 'área es el espacio interior', 'fórmula perímetro correcta', 'fórmula área correcta'],
       },
     ],
   },
@@ -78,7 +111,8 @@ export const tareaSecuencia28: TareaCPA = {
         pregunta:
           'Dos rectangulos tienen el mismo perimetro de 20 cm pero diferente area. Da un ejemplo de cada uno y explica por que el area cambia aunque el perimetro sea igual.',
         respuesta:
-          'Ejemplo 1: Rectangulo de 9 x 1 cm. Perimetro = 2(9+1) = 20 cm, area = 9 cm2.\nEjemplo 2: Rectangulo de 5 x 5 cm (cuadrado). Perimetro = 2(5+5) = 20 cm, area = 25 cm2.\nEl area cambia porque depende del producto de las dimensiones, no de su suma. Cuando las dimensiones son mas parecidas (como en el cuadrado), el area es mayor. Cuando una dimension es mucho mayor que la otra, la figura se alarga y el area disminuye.',
+          'Un rectángulo de 9×1 tiene perímetro 20 cm y área 9 cm². Un cuadrado de 5×5 tiene el mismo perímetro pero área 25 cm². El área cambia porque depende del producto de las dimensiones, no de su suma.',
+        criterios_aceptacion: ['dos ejemplos con perímetro 20', 'áreas diferentes', 'área depende del producto', 'dimensiones más iguales dan mayor área'],
       },
     ],
   },

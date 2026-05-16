@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia31: TareaCPA = {
   secuencia_ref: 31,
+  concepto_clave: 'Calcular moda, media y mediana a partir de datos organizados',
+  contexto: {
+    personaje: 'Profesor Garcia',
+    objetos: { a: { nombre: 'calificacion', emoji: '📝' }, b: { nombre: 'promedio', emoji: '📊' } },
+    valores_clave: { datos: [5, 6, 7, 8, 9] },
+    tipo: 'estadistica',
+    narrativa: 'El Profesor Garcia tiene las calificaciones de sus alumnos y quiere calcular la moda, media y mediana para resumir los datos.',
+    pregunta_central: '¿Cual es la media, mediana y moda de las calificaciones?',
+    transiciones: {
+      concreto: 'Construye el histograma con las frecuencias de cada calificacion.',
+      bridge_pictorico: 'La barra mas alta indica la moda.',
+      pictorico: 'Observa la distribucion en el modelo.',
+      bridge_abstracto: 'Media = suma/n, Mediana = valor central, Moda = mas frecuente.',
+      abstracto: 'Ahora calcula medidas de tendencia central.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'histograma_construible',
@@ -29,7 +45,8 @@ export const tareaSecuencia31: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         { label: '5', valor: 2, color: 'amarillo' },
         { label: '6', valor: 3, color: 'azul' },
@@ -51,9 +68,10 @@ export const tareaSecuencia31: TareaCPA = {
       {
         pregunta:
           'Usando los datos del histograma, calcula la media (promedio) de las calificaciones.',
-        tipo: 'calculo',
+        tipo: 'abierta',
         respuesta:
           'Suma = (5x2) + (6x3) + (7x5) + (8x4) + (9x1) = 10 + 18 + 35 + 32 + 9 = 104.\nTotal de alumnos = 15.\nMedia = 104 / 15 = 6.93 (aproximadamente 6.9).',
+        criterios_aceptacion: ['suma total 104', 'dividir entre 15 alumnos', 'media aproximadamente 6.9 o 6.93 o 104/15'],
       },
     ],
   },
@@ -83,7 +101,13 @@ export const tareaSecuencia31: TareaCPA = {
         pregunta:
           'Un alumno dice que la media es la mejor medida para describir las calificaciones del grupo. Otro dice que la moda es mejor. Con cual estas de acuerdo y por que?',
         respuesta:
-          'Ambas medidas son utiles pero en diferentes situaciones. La media (6.9) nos da un promedio general del grupo, pero puede verse afectada por valores extremos. La moda (7) nos dice cual calificacion fue la mas comun. En este caso, ambas son parecidas (6.9 y 7), asi que las dos describen bien al grupo. Sin embargo, si hubiera un valor muy alto o muy bajo (valor atipico), la media cambiaria mucho pero la moda no, asi que la moda seria mas representativa en ese caso.',
+          'Ambas son utiles. La media da el promedio del grupo pero puede cambiar mucho si hay un valor muy alto o muy bajo. La moda dice cual calificacion fue la mas comun y no se afecta por valores extremos. Depende de la situacion.',
+        criterios_aceptacion: [
+          'media: promedio general',
+          'moda: valor mas frecuente',
+          'valores extremos afectan la media',
+          'ambas son utiles segun el caso',
+        ],
       },
     ],
   },

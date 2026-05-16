@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia01a: TareaCPA = {
   secuencia_ref: 1,
+  concepto_clave: 'Representar una fraccion como parte de un todo',
+  contexto: {
+    personaje: 'Sofia',
+    objetos: { a: { nombre: 'chocolate', emoji: '🍫' }, b: { nombre: 'pedazo', emoji: '🟫' } },
+    valores_clave: { fraccion: '3/8' },
+    tipo: 'fraccion',
+    narrativa: 'Sofia tiene una barra de chocolate dividida en 8 pedazos iguales. Quiere comerse 3 pedazos y guardar el resto para despues.',
+    pregunta_central: '¿Que fraccion del chocolate se come Sofia?',
+    transiciones: {
+      concreto: 'Ayuda a Sofia a partir su chocolate y seleccionar los pedazos que quiere comerse.',
+      bridge_pictorico: 'Sofia se comio 3 de 8 pedazos. Eso es la fraccion 3/8 del chocolate.',
+      pictorico: 'Observa como se representa esta fraccion en un modelo de barras.',
+      bridge_abstracto: 'El modelo muestra que 3/8 es menos de la mitad del chocolate.',
+      abstracto: 'Ahora trabaja con fracciones en otros contextos.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'chocolate_secable',
@@ -25,7 +41,8 @@ export const tareaSecuencia01a: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         {
           label: 'Seleccionadas',
@@ -53,10 +70,10 @@ export const tareaSecuencia01a: TareaCPA = {
       },
       {
         pregunta:
-          'Si la tableta tuviera 4 piezas mas (12 en total) y seleccionas la misma proporcion, cuantas piezas seleccionarias? Muestra tu procedimiento.',
+          'Si la tableta tuviera el doble de piezas (16 en total) y seleccionas la misma proporcion (3/8), cuantas piezas seleccionarias? Muestra tu procedimiento.',
         tipo: 'calculo',
         respuesta:
-          'La fraccion es 3/8, que significa 3 de cada 8. Si ahora hay 12 piezas: 12 x (3/8) = 36/8 = 4.5. Como no se puede partir una pieza exactamente, se necesitarian aproximadamente 4 o 5 piezas. Pero si mantenemos la proporcion exacta: 3/8 de 12 = 4.5 piezas.',
+          'La fraccion es 3/8, que significa 3 de cada 8. Si ahora hay 16 piezas: 16 x (3/8) = 48/8 = 6. Seleccionaria 6 piezas de las 16.',
       },
     ],
   },
@@ -81,7 +98,13 @@ export const tareaSecuencia01a: TareaCPA = {
         pregunta:
           'Explica con tus palabras que significa una fraccion. Usa el ejemplo del chocolate para que tu explicacion sea clara.',
         respuesta:
-          'Una fraccion representa una parte de un todo. El denominador (numero de abajo) nos dice en cuantas partes iguales se divide el entero, y el numerador (numero de arriba) nos dice cuantas de esas partes tomamos. Por ejemplo, en la tableta de chocolate con 8 piezas, la fraccion 3/8 significa que dividimos la tableta en 8 partes iguales y tomamos 3 de ellas.',
+          'Una fraccion representa una parte de un todo. El denominador dice en cuantas partes iguales se divide el entero y el numerador dice cuantas tomamos. En la tableta de 8 piezas, 3/8 significa que tomamos 3 de las 8 partes.',
+        criterios_aceptacion: [
+          'parte de un todo',
+          'denominador = total de partes',
+          'numerador = partes tomadas',
+          'ejemplo con chocolate o numeros correctos',
+        ],
       },
     ],
   },

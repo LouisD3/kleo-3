@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia13a: TareaCPA = {
   secuencia_ref: 13,
+  concepto_clave: 'Encontrar el porcentaje de una cantidad usando la cuadricula de 100',
+  contexto: {
+    personaje: 'Laura',
+    objetos: { a: { nombre: 'cuadrito', emoji: '🟩' }, b: { nombre: 'porcentaje', emoji: '%' } },
+    valores_clave: { porcentaje: 35 },
+    tipo: 'porcentaje',
+    narrativa: 'Laura usa una cuadricula de 100 para entender los porcentajes de forma visual. Cada cuadrito es 1%.',
+    pregunta_central: '¿Como se ve 35% en la cuadricula?',
+    transiciones: {
+      concreto: 'Colorea 35 cuadritos de los 100 para representar el 35%.',
+      bridge_pictorico: '35 de 100 cuadritos coloreados = 35%.',
+      pictorico: 'Observa la proporcion en el modelo de barras.',
+      bridge_abstracto: '35% = 35/100 = 0.35. Es poco mas de un tercio.',
+      abstracto: 'Ahora calcula porcentajes en otros contextos.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'cuadricula_100',
@@ -21,7 +37,8 @@ export const tareaSecuencia13a: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         { label: 'Prefieren futbol (35%)', valor: 35, color: 'amarillo', subdivisiones: 7 },
         { label: 'Otros deportes (65%)', valor: 65, color: 'azul', subdivisiones: 13 },
@@ -67,7 +84,13 @@ export const tareaSecuencia13a: TareaCPA = {
         pregunta:
           'Explica con tus palabras que significa "porcentaje" y por que la cuadricula de 100 casillas te ayuda a entenderlo.',
         respuesta:
-          'Porcentaje significa "de cada cien". La cuadricula de 100 casillas lo hace visible: cada casilla vale exactamente 1%. Si sombreas 35 casillas, ves directamente que es el 35% del total. Funciona porque la cuadricula tiene exactamente 100 partes iguales, igual que el porcentaje siempre se refiere a 100.',
+          'Porcentaje significa "de cada cien". La cuadricula tiene exactamente 100 casillas, asi que cada una vale 1%. Si sombreas 35, ves de inmediato que es el 35%.',
+        criterios_aceptacion: [
+          'de cada cien',
+          '100 partes iguales',
+          'cada casilla vale 1%',
+          'representacion visual del porcentaje',
+        ],
       },
     ],
   },

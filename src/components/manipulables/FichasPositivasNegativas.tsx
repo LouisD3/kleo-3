@@ -23,7 +23,7 @@ export interface EstadoManipulable {
 // SVG chip components
 function FichaPositiva() {
   return (
-    <svg width="40" height="40" viewBox="0 0 40 40">
+    <svg width="40" height="40" viewBox="0 0 40 40" role="img" aria-label="Ficha positiva">
       <circle cx="20" cy="20" r="18" fill="#EF4444" stroke="#DC2626" strokeWidth="1.5" />
       <circle cx="20" cy="20" r="16" fill="url(#redShine)" opacity="0.3" />
       <text
@@ -49,7 +49,7 @@ function FichaPositiva() {
 
 function FichaNegativa() {
   return (
-    <svg width="40" height="40" viewBox="0 0 40 40">
+    <svg width="40" height="40" viewBox="0 0 40 40" role="img" aria-label="Ficha negativa">
       <circle cx="20" cy="20" r="18" fill="#3B82F6" stroke="#2563EB" strokeWidth="1.5" />
       <circle cx="20" cy="20" r="16" fill="url(#blueShine)" opacity="0.3" />
       <text
@@ -213,7 +213,7 @@ export default function FichasPositivasNegativas({
       {/* Live counter */}
       <div className="flex items-center justify-center gap-4 text-sm">
         <span className="flex items-center gap-1">
-          <span className="w-3 h-3 rounded-full bg-red-500 inline-block" />
+          <span className="w-3 h-3 rounded-full bg-amber-500 inline-block" />
           <span className="font-semibold text-gray-700">Positivas: {positivasRestantes}</span>
         </span>
         <span className="text-gray-300">|</span>
@@ -276,7 +276,7 @@ export default function FichasPositivasNegativas({
             w-full py-3 rounded-xl text-sm font-semibold transition-all
             ${
               errorFlash
-                ? 'bg-red-500 text-white animate-[shake_0.3s_ease-in-out]'
+                ? 'bg-amber-500 text-white animate-[shake_0.3s_ease-in-out]'
                 : 'bg-gray-900 text-white hover:bg-gray-800 active:scale-[0.98]'
             }
           `}

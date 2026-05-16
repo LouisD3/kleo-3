@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia08: TareaCPA = {
   secuencia_ref: 8,
+  concepto_clave: 'Aplicar la propiedad distributiva',
+  contexto: {
+    personaje: 'Ana',
+    objetos: { a: { nombre: 'azulejo', emoji: '🟦' }, b: { nombre: 'ecuacion', emoji: '🟰' } },
+    valores_clave: { objetivo: 14 },
+    tipo: 'ecuacion',
+    narrativa: 'Ana aprende que multiplicar una suma es lo mismo que sumar las multiplicaciones por separado. Usa azulejos para verlo.',
+    pregunta_central: '¿Como se resuelve 2(x + 3) = 14 usando la propiedad distributiva?',
+    transiciones: {
+      concreto: 'Arma la ecuacion con azulejos de algebra para ver la distributiva.',
+      bridge_pictorico: '2 × (3 + 4) = 2×3 + 2×4 = 6 + 8 = 14.',
+      pictorico: 'Observa como se distribuye la multiplicacion en el modelo.',
+      bridge_abstracto: 'La propiedad distributiva descompone una multiplicacion en sumas.',
+      abstracto: 'Ahora aplica la distributiva a expresiones algebraicas.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'azulejos_algebra',
@@ -25,7 +41,8 @@ export const tareaSecuencia08: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         {
           label: '2x',
@@ -80,7 +97,13 @@ export const tareaSecuencia08: TareaCPA = {
         pregunta:
           'Explica con tus palabras que es la propiedad distributiva y por que es util. Usa el ejemplo de los azulejos de algebra con 2(x + 3) = 14 para apoyar tu explicacion.',
         respuesta:
-          'La propiedad distributiva nos permite multiplicar un numero por una suma al multiplicarlo por cada sumando y luego sumar los resultados: a(b + c) = ab + ac. Es util porque nos ayuda a simplificar expresiones y resolver ecuaciones. Por ejemplo, con los azulejos, 2(x + 3) se convierte en 2x + 6 al distribuir el 2. Esto nos permite ver claramente cuantas barras de x y cuantas unidades tenemos, y asi resolver paso a paso: 2x + 6 = 14, luego 2x = 8, y finalmente x = 4.',
+          'La propiedad distributiva dice que puedes multiplicar un numero por cada parte de una suma: 2(x+3) = 2x+6. Es util porque convierte una expresion con parentesis en una mas facil de resolver.',
+        criterios_aceptacion: [
+          'multiplicar por cada sumando',
+          'ejemplo con 2(x+3)',
+          'resultado 2x+6',
+          'simplifica la ecuacion',
+        ],
       },
     ],
   },

@@ -3,7 +3,6 @@
 import { pdf } from '@react-pdf/renderer'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import NavBar from '@/components/layout/NavBar.jsx'
 import TareaPDF from '@/components/profesor/TareaPDF.jsx'
 import Boton from '@/components/ui/Boton.jsx'
 import MensajeError from '@/components/ui/MensajeError.jsx'
@@ -34,12 +33,14 @@ export default function GenerarTarea() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const tareaIdParam = searchParams.get('tarea')
-  const { generarTarea, cargando, error, setError } = useAnthropicAPI()
+  const { generarTarea, generarTareaCPA, cargando, error, setError } = useAnthropicAPI()
   const agregarTarea = useAgregarTarea()
   const actualizarTarea = useActualizarTarea()
   const publicarTarea = usePublicarTarea()
   const { profesor, clases } = useAuthStore()
   const { data: tareasData } = useTareasProfesor(profesor?.id)
+
+  const [modoCPA, setModoCPA] = useState(true)
 
   const [form, setForm] = useState({
     nombre: '',
@@ -67,14 +68,17 @@ export default function GenerarTarea() {
     const tarea = tareasData.tareas.find((t) => t.id === tareaIdParam)
     if (!tarea || tarea.estado !== 'borrador') return
     inicializado.current = true
-    setTareaGenerada(tarea.contenido_cpa)
+    const contenido = tarea.contenido_cpa
+    const esCPA = contenido && !Array.isArray(contenido) && contenido.concreto != null
+    setModoCPA(esCPA)
+    setTareaGenerada(contenido)
     setTareaGuardada(tarea)
     setForm((prev) => ({
       ...prev,
       nombre: tarea.nombre,
       dificultad: tarea.dificultad,
       tipos: prev.tipos,
-      numeroPreguntas: tarea.contenido_cpa?.length ?? prev.numeroPreguntas,
+      numeroPreguntas: Array.isArray(contenido) ? contenido.length : prev.numeroPreguntas,
       fecha_limite: tarea.fecha_limite ?? '',
       pdas: tarea.pda ?? [],
     }))
@@ -100,7 +104,7 @@ export default function GenerarTarea() {
       setError('Por favor escribe un nombre para la tarea.')
       return
     }
-    if (form.tipos.length === 0) {
+    if (!modoCPA && form.tipos.length === 0) {
       setError('Selecciona al menos un tipo de ejercicio.')
       return
     }
@@ -109,26 +113,40 @@ export default function GenerarTarea() {
       return
     }
 
-    const resultado = await generarTarea({
-      dificultad: form.dificultad,
-      tipos: form.tipos,
-      numeroPreguntas: form.numeroPreguntas,
-      pda: form.pdas.length > 0 ? form.pdas : null,
-      instrucciones: form.instrucciones.trim() || null,
-    })
+    let contenido
+    if (modoCPA) {
+      const resultado = await generarTareaCPA({
+        dificultad: form.dificultad,
+        pda: form.pdas.length > 0 ? form.pdas : null,
+        instrucciones: form.instrucciones.trim() || null,
+        tipo_concreto: 'dulces_agrupables',
+      })
+      if (!resultado?.concreto) return
+      contenido = resultado
+    } else {
+      const resultado = await generarTarea({
+        dificultad: form.dificultad,
+        tipos: form.tipos,
+        numeroPreguntas: form.numeroPreguntas,
+        pda: form.pdas.length > 0 ? form.pdas : null,
+        instrucciones: form.instrucciones.trim() || null,
+      })
+      if (!resultado?.preguntas) return
+      contenido = resultado.preguntas
+    }
 
-    if (resultado?.preguntas) {
+    if (contenido) {
       const nueva = await agregarTarea.mutateAsync({
         profesor_id: profesor.id,
         clase_id: clases[0]?.id,
         nombre: form.nombre,
         dificultad: form.dificultad,
-        contenido_cpa: resultado.preguntas,
+        contenido_cpa: contenido,
         fecha_limite: form.fecha_limite || null,
         pda: form.pdas.length > 0 ? form.pdas : null,
         secuencia_ref: null,
       })
-      setTareaGenerada(resultado.preguntas)
+      setTareaGenerada(contenido)
       setTareaGuardada(nueva)
       setToastVisible(true)
       window.scrollTo(0, 0)
@@ -241,158 +259,191 @@ export default function GenerarTarea() {
   }, [pdasFiltrados])
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <NavBar titulo={tareaGenerada ? 'Revisar borrador' : 'Generar tarea'} volver="/profesor" />
+    <div className="px-4 sm:px-6 md:px-8 py-8 animate-fade-in">
+      {!tareaGenerada ? (
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">Nueva tarea personalizada</h1>
+            <p className="text-sm text-gray-500">
+              Genera una tarea de Matematicas con IA. Para tareas Singapur de referencia, usa la
+              Biblioteca.
+            </p>
+          </div>
 
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 animate-fade-in">
-        {!tareaGenerada ? (
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-1">Nueva tarea personalizada</h1>
-              <p className="text-sm text-gray-500">
-                Genera una tarea de Matematicas con IA. Para tareas Singapur de referencia, usa la
-                Biblioteca.
+          {/* Nombre */}
+          <div className="card p-6">
+            <label className="label-base">Nombre de la tarea</label>
+            <input
+              type="text"
+              value={form.nombre}
+              onChange={(e) => setForm((p) => ({ ...p, nombre: e.target.value }))}
+              placeholder="Ej. Repaso fracciones — Unidad 3"
+              className="input-base"
+            />
+          </div>
+
+          {/* Modo CPA vs Legacy */}
+          <div className="card p-6">
+            <label className="label-base">Formato de tarea</label>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setModoCPA(true)}
+                className={`flex-1 py-2 px-4 rounded-xl border text-sm font-medium transition-all ${
+                  modoCPA
+                    ? 'border-gray-900 bg-gray-900 text-white'
+                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                }`}
+              >
+                Singapur (CPA)
+              </button>
+              <button
+                type="button"
+                onClick={() => setModoCPA(false)}
+                className={`flex-1 py-2 px-4 rounded-xl border text-sm font-medium transition-all ${
+                  !modoCPA
+                    ? 'border-gray-900 bg-gray-900 text-white'
+                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                }`}
+              >
+                Preguntas clasicas
+              </button>
+            </div>
+            {modoCPA && (
+              <p className="text-xs text-gray-400 mt-2">
+                Genera una tarea con 3 etapas (Concreto, Pictorico, Abstracto) alrededor de un
+                problema unico.
               </p>
-            </div>
+            )}
+          </div>
 
-            {/* Nombre */}
-            <div className="card p-6">
-              <label className="label-base">Nombre de la tarea</label>
-              <input
-                type="text"
-                value={form.nombre}
-                onChange={(e) => setForm((p) => ({ ...p, nombre: e.target.value }))}
-                placeholder="Ej. Repaso fracciones — Unidad 3"
-                className="input-base"
-              />
+          {/* Dificultad */}
+          <div className="card p-6">
+            <label className="label-base">Dificultad</label>
+            <div className="flex gap-3">
+              {DIFICULTADES.map((d) => (
+                <button
+                  key={d}
+                  type="button"
+                  onClick={() => setForm((p) => ({ ...p, dificultad: d }))}
+                  className={`flex-1 py-2 px-4 rounded-xl border text-sm font-medium transition-all ${
+                    form.dificultad === d
+                      ? 'border-gray-900 bg-gray-900 text-white'
+                      : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                  }`}
+                >
+                  {d}
+                </button>
+              ))}
             </div>
+          </div>
 
-            {/* Dificultad */}
-            <div className="card p-6">
-              <label className="label-base">Dificultad</label>
-              <div className="flex gap-3">
-                {DIFICULTADES.map((d) => (
-                  <button
-                    key={d}
-                    type="button"
-                    onClick={() => setForm((p) => ({ ...p, dificultad: d }))}
-                    className={`flex-1 py-2 px-4 rounded-xl border text-sm font-medium transition-all ${
-                      form.dificultad === d
-                        ? 'border-gray-900 bg-gray-900 text-white'
-                        : 'border-gray-200 text-gray-600 hover:border-gray-300'
-                    }`}
+          {/* Fecha limite */}
+          <div className="card p-6">
+            <label className="label-base">
+              Fecha limite <span className="text-gray-400 font-normal">(opcional)</span>
+            </label>
+            <input
+              type="datetime-local"
+              value={form.fecha_limite}
+              onChange={(e) => setForm((p) => ({ ...p, fecha_limite: e.target.value }))}
+              className="input-base"
+            />
+          </div>
+
+          {/* PDA */}
+          <div className="card p-6">
+            <div className="flex items-center justify-between mb-1">
+              <label className="label-base mb-0">
+                PDA <span className="text-gray-400 font-normal">(opcional)</span>
+              </label>
+            </div>
+            <p className="text-xs text-gray-400 mb-3">
+              Alinea las preguntas al programa NEM — Matematicas 1° Secundaria.
+            </p>
+            {form.pdas.length > 0 && (
+              <div className="space-y-2 mb-3">
+                {form.pdas.map((pda, idx) => (
+                  <div
+                    key={pda.secuencia}
+                    className="rounded-xl border border-yellow-300 bg-yellow-50 p-3 flex items-start gap-3"
                   >
-                    {d}
-                  </button>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-yellow-700 mb-0.5">
+                        Secuencia {pda.secuencia} · {pda.titulo}
+                      </p>
+                      {pda.contenido && (
+                        <p className="text-xs text-gray-500 mb-0.5">{pda.contenido}</p>
+                      )}
+                      <p className="text-sm text-gray-700 leading-snug">{pda.pda}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setForm((p) => ({ ...p, pdas: p.pdas.filter((_, i) => i !== idx) }))
+                      }
+                      className="flex-shrink-0 p-1 text-amber-400 hover:text-amber-600 transition-colors"
+                      title="Quitar PDA"
+                    >
+                      <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path
+                          fillRule="evenodd"
+                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 ))}
               </div>
-            </div>
-
-            {/* Fecha limite */}
-            <div className="card p-6">
-              <label className="label-base">
-                Fecha limite <span className="text-gray-400 font-normal">(opcional)</span>
-              </label>
-              <input
-                type="datetime-local"
-                value={form.fecha_limite}
-                onChange={(e) => setForm((p) => ({ ...p, fecha_limite: e.target.value }))}
-                className="input-base"
-              />
-            </div>
-
-            {/* PDA */}
-            <div className="card p-6">
-              <div className="flex items-center justify-between mb-1">
-                <label className="label-base mb-0">
-                  PDA <span className="text-gray-400 font-normal">(opcional)</span>
-                </label>
-              </div>
-              <p className="text-xs text-gray-400 mb-3">
-                Alinea las preguntas al programa NEM — Matematicas 1° Secundaria.
+            )}
+            {form.pdas.length >= 5 ? (
+              <p className="text-xs text-gray-400 italic text-center py-2">
+                Maximo de 5 PDAs alcanzado.
               </p>
-              {form.pdas.length > 0 && (
-                <div className="space-y-2 mb-3">
-                  {form.pdas.map((pda, idx) => (
-                    <div
-                      key={pda.secuencia}
-                      className="rounded-xl border border-yellow-300 bg-yellow-50 p-3 flex items-start gap-3"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-yellow-700 mb-0.5">
-                          Secuencia {pda.secuencia} · {pda.titulo}
-                        </p>
-                        {pda.contenido && (
-                          <p className="text-xs text-gray-500 mb-0.5">{pda.contenido}</p>
-                        )}
-                        <p className="text-sm text-gray-700 leading-snug">{pda.pda}</p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setForm((p) => ({ ...p, pdas: p.pdas.filter((_, i) => i !== idx) }))
-                        }
-                        className="flex-shrink-0 p-1 text-red-400 hover:text-red-600 transition-colors"
-                        title="Quitar PDA"
-                      >
-                        <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                          <path
-                            fillRule="evenodd"
-                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {form.pdas.length >= 5 ? (
-                <p className="text-xs text-gray-400 italic text-center py-2">
-                  Maximo de 5 PDAs alcanzado.
-                </p>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setBusquedaPDA('')
-                    setModalPDAabierto(true)
-                  }}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-dashed border-gray-300 text-sm font-medium text-gray-500 hover:border-gray-400 hover:text-gray-700 transition-colors"
-                >
-                  <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
-                  </svg>
-                  {form.pdas.length > 0
-                    ? `Agregar PDA (${form.pdas.length}/5)`
-                    : 'Seleccionar de la biblioteca'}
-                </button>
-              )}
-            </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setBusquedaPDA('')
+                  setModalPDAabierto(true)
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-dashed border-gray-300 text-sm font-medium text-gray-500 hover:border-gray-400 hover:text-gray-700 transition-colors"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
+                </svg>
+                {form.pdas.length > 0
+                  ? `Agregar PDA (${form.pdas.length}/5)`
+                  : 'Seleccionar de la biblioteca'}
+              </button>
+            )}
+          </div>
 
-            {/* Instrucciones */}
-            <div className="card p-6">
-              <label className="label-base">
-                Instrucciones especificas{' '}
-                <span className="text-gray-400 font-normal">(opcional)</span>
-              </label>
-              <p className="text-xs text-gray-400 mb-3">
-                Indica el tema, concepto o punto especifico que quieres trabajar.
-              </p>
-              <textarea
-                value={form.instrucciones}
-                onChange={(e) => setForm((p) => ({ ...p, instrucciones: e.target.value }))}
-                placeholder="Ej. Enfocarse en fracciones equivalentes, solo usar ejemplos con numeros positivos"
-                rows={2}
-                className="input-base resize-none"
-              />
-            </div>
+          {/* Instrucciones */}
+          <div className="card p-6">
+            <label className="label-base">
+              Instrucciones especificas{' '}
+              <span className="text-gray-400 font-normal">(opcional)</span>
+            </label>
+            <p className="text-xs text-gray-400 mb-3">
+              Indica el tema, concepto o punto especifico que quieres trabajar.
+            </p>
+            <textarea
+              value={form.instrucciones}
+              onChange={(e) => setForm((p) => ({ ...p, instrucciones: e.target.value }))}
+              placeholder="Ej. Enfocarse en fracciones equivalentes, solo usar ejemplos con numeros positivos"
+              rows={2}
+              className="input-base resize-none"
+            />
+          </div>
 
-            {/* Tipos de ejercicio */}
+          {/* Tipos de ejercicio — solo en modo clasico */}
+          {!modoCPA && (
             <div className="card p-6">
               <label className="label-base">Tipo(s) de ejercicio</label>
               <p className="text-xs text-gray-400 mb-3">
-                Selecciona uno o mas. "Ejercicio mixto" combina todos los tipos.
+                Selecciona uno o más. "Ejercicio mixto" combina todos los tipos.
               </p>
               <div className="flex flex-wrap gap-2">
                 {TIPOS_EJERCICIO.map((tipo) => {
@@ -414,8 +465,10 @@ export default function GenerarTarea() {
                 })}
               </div>
             </div>
+          )}
 
-            {/* Numero de preguntas */}
+          {/* Numero de preguntas — solo en modo clasico */}
+          {!modoCPA && (
             <div className="card p-6">
               <div className="flex items-center justify-between mb-3">
                 <label className="label-base mb-0">Numero de preguntas</label>
@@ -436,44 +489,112 @@ export default function GenerarTarea() {
                 <span>20</span>
               </div>
             </div>
+          )}
 
-            <MensajeError mensaje={error} onCerrar={() => setError(null)} />
+          <MensajeError mensaje={error} onCerrar={() => setError(null)} />
 
-            <Boton
-              onClick={handleGenerar}
-              variante="primario"
-              size="lg"
-              disabled={cargando}
-              className="w-full"
-            >
-              {cargando ? (
-                <>
-                  <Spinner size="sm" />
-                  Generando tarea con IA...
-                </>
-              ) : (
-                'GENERAR TAREA'
-              )}
-            </Boton>
+          <Boton
+            onClick={handleGenerar}
+            variante="primario"
+            size="lg"
+            disabled={cargando}
+            className="w-full"
+          >
+            {cargando ? (
+              <>
+                <Spinner size="sm" />
+                Generando tarea con IA...
+              </>
+            ) : (
+              'GENERAR TAREA'
+            )}
+          </Boton>
+        </div>
+      ) : (
+        /* Vista previa — Revisar borrador */
+        <div className="animate-fade-in space-y-6">
+          <div>
+            <div className="flex items-center gap-3 mb-1">
+              <h1 className="text-2xl font-bold text-gray-900">Revisar borrador</h1>
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-yellow-700 bg-yellow-50 border border-yellow-200 px-2.5 py-1 rounded-full">
+                Borrador
+              </span>
+            </div>
+            <p className="text-sm text-gray-500">
+              {form.nombre} · Matematicas 1° Sec · {form.dificultad}
+              {!modoCPA && ` · ${tareaGenerada.length} preguntas`}
+              {modoCPA && ' · Metodo Singapur (CPA)'}
+              {form.fecha_limite &&
+                ` · Limite: ${new Date(form.fecha_limite).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`}
+            </p>
           </div>
-        ) : (
-          /* Vista previa — Revisar borrador */
-          <div className="animate-fade-in space-y-6">
-            <div>
-              <div className="flex items-center gap-3 mb-1">
-                <h1 className="text-2xl font-bold text-gray-900">Revisar borrador</h1>
-                <span className="inline-flex items-center gap-1 text-xs font-medium text-yellow-700 bg-yellow-50 border border-yellow-200 px-2.5 py-1 rounded-full">
-                  Borrador
+
+          {/* CPA contexto preview */}
+          {modoCPA && tareaGenerada?.contexto && (
+            <div className="card p-6 space-y-3">
+              <h3 className="font-semibold text-gray-900">Problema ancla</h3>
+              <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3">
+                <p className="text-sm text-amber-900 leading-relaxed">
+                  {tareaGenerada.contexto.narrativa}
+                </p>
+                <p className="text-sm font-semibold text-amber-800 mt-1">
+                  {tareaGenerada.contexto.pregunta_central}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2 text-xs">
+                <span className="px-2.5 py-1 rounded-full bg-gray-100 text-gray-600">
+                  {tareaGenerada.contexto.objetos.a.emoji} {tareaGenerada.contexto.objetos.a.nombre}
+                </span>
+                <span className="px-2.5 py-1 rounded-full bg-gray-100 text-gray-600">
+                  {tareaGenerada.contexto.objetos.b.emoji} {tareaGenerada.contexto.objetos.b.nombre}
+                </span>
+                <span className="px-2.5 py-1 rounded-full bg-gray-100 text-gray-600">
+                  Personaje: {tareaGenerada.contexto.personaje}
                 </span>
               </div>
-              <p className="text-sm text-gray-500">
-                {form.nombre} · Matematicas 1° Sec · {form.dificultad} · {tareaGenerada.length} preguntas
-                {form.fecha_limite &&
-                  ` · Limite: ${new Date(form.fecha_limite).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`}
-              </p>
             </div>
+          )}
 
-            {/* Questions preview */}
+          {/* CPA structure preview */}
+          {modoCPA && tareaGenerada?.concreto && (
+            <div className="space-y-3">
+              <div className="card p-4">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
+                  1. Concreto
+                </p>
+                <p className="text-sm text-gray-700">
+                  {tareaGenerada.concreto.manipulable.pregunta}
+                </p>
+              </div>
+              <div className="card p-4">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
+                  2. Pictorico
+                </p>
+                <p className="text-sm text-gray-700 mb-1">
+                  {tareaGenerada.pictorico.representacion?.tipo_representacion ?? 'modelo_barras'} ·{' '}
+                  {tareaGenerada.pictorico.preguntas.length} preguntas
+                </p>
+                {tareaGenerada.pictorico.preguntas.map((p, i) => (
+                  <p key={i} className="text-xs text-gray-500 ml-3">
+                    — {p.pregunta}
+                  </p>
+                ))}
+              </div>
+              <div className="card p-4">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
+                  3. Abstracto
+                </p>
+                {tareaGenerada.abstracto.preguntas.map((p, i) => (
+                  <p key={i} className="text-xs text-gray-500 ml-3">
+                    — [{p.tipo}] {p.pregunta}
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Legacy flat questions preview */}
+          {!modoCPA && Array.isArray(tareaGenerada) && (
             <div className="card p-0 overflow-hidden">
               <div className="divide-y divide-gray-50">
                 {tareaGenerada.map((p, i) => (
@@ -505,114 +626,111 @@ export default function GenerarTarea() {
                 ))}
               </div>
             </div>
+          )}
 
-            <MensajeError mensaje={error} onCerrar={() => setError(null)} />
+          <MensajeError mensaje={error} onCerrar={() => setError(null)} />
 
-            {/* Actions */}
-            <div className="card p-6 space-y-4">
-              {clases.length > 0 && (
-                <>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Publicar tarea</h3>
-                    <p className="text-xs text-gray-400 mb-4">
-                      Una vez publicada, la tarea sera visible para los alumnos de las clases
-                      seleccionadas.
-                    </p>
-                    {clases.length > 1 && (
-                      <div className="flex flex-wrap gap-2 mb-4">
+          {/* Actions */}
+          <div className="card p-6 space-y-4">
+            {clases.length > 0 && (
+              <>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Publicar tarea</h3>
+                  <p className="text-xs text-gray-400 mb-4">
+                    Una vez publicada, la tarea sera visible para los alumnos de las clases
+                    seleccionadas.
+                  </p>
+                  {clases.length > 1 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setClasesPublicar(
+                            clasesPublicar.length === clases.length ? [] : clases.map((c) => c.id),
+                          )
+                        }
+                        className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
+                          clasesPublicar.length === clases.length
+                            ? 'border-gray-900 bg-gray-900 text-white'
+                            : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                        }`}
+                      >
+                        Todas
+                      </button>
+                      {clases.map((c) => (
                         <button
+                          key={c.id}
                           type="button"
-                          onClick={() =>
-                            setClasesPublicar(
-                              clasesPublicar.length === clases.length
-                                ? []
-                                : clases.map((c) => c.id),
-                            )
-                          }
+                          onClick={() => toggleClasePublicar(c.id)}
                           className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
-                            clasesPublicar.length === clases.length
+                            clasesPublicar.includes(c.id)
                               ? 'border-gray-900 bg-gray-900 text-white'
                               : 'border-gray-200 text-gray-600 hover:border-gray-300'
                           }`}
                         >
-                          Todas
+                          {c.nombre}
+                          <span className="text-xs opacity-60 ml-1">· {c.grado}</span>
                         </button>
-                        {clases.map((c) => (
-                          <button
-                            key={c.id}
-                            type="button"
-                            onClick={() => toggleClasePublicar(c.id)}
-                            className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
-                              clasesPublicar.includes(c.id)
-                                ? 'border-gray-900 bg-gray-900 text-white'
-                                : 'border-gray-200 text-gray-600 hover:border-gray-300'
-                            }`}
-                          >
-                            {c.nombre}
-                            <span className="text-xs opacity-60 ml-1">· {c.grado}</span>
-                          </button>
-                        ))}
-                      </div>
+                      ))}
+                    </div>
+                  )}
+                  <Boton
+                    variante="primario"
+                    size="lg"
+                    onClick={handlePublicar}
+                    disabled={clasesPublicar.length === 0 || publicando}
+                    className="w-full"
+                  >
+                    {publicando ? (
+                      <>
+                        <Spinner size="sm" />
+                        Publicando...
+                      </>
+                    ) : clasesPublicar.length > 1 ? (
+                      `Publicar en ${clasesPublicar.length} clases`
+                    ) : (
+                      'Publicar tarea'
                     )}
-                    <Boton
-                      variante="primario"
-                      size="lg"
-                      onClick={handlePublicar}
-                      disabled={clasesPublicar.length === 0 || publicando}
-                      className="w-full"
-                    >
-                      {publicando ? (
-                        <>
-                          <Spinner size="sm" />
-                          Publicando...
-                        </>
-                      ) : clasesPublicar.length > 1 ? (
-                        `Publicar en ${clasesPublicar.length} clases`
-                      ) : (
-                        'Publicar tarea'
-                      )}
-                    </Boton>
-                  </div>
-                  <div className="border-t border-gray-100" />
-                </>
-              )}
-              <div className="flex flex-wrap gap-3">
-                <Boton variante="secundario" size="md" onClick={() => router.push('/profesor')}>
-                  Guardar y volver
-                </Boton>
-                <Boton
-                  variante="secundario"
-                  size="md"
-                  onClick={() => {
-                    setTareaGenerada(null)
-                    setTareaGuardada(null)
-                    window.scrollTo(0, 0)
-                  }}
-                >
-                  Regenerar todo
-                </Boton>
-                <Boton
-                  variante="secundario"
-                  size="md"
-                  disabled={descargandoPDF === 'examen'}
-                  onClick={() => handleDescargarPDF(false)}
-                >
-                  {descargandoPDF === 'examen' ? 'Generando...' : 'Examen PDF'}
-                </Boton>
-                <Boton
-                  variante="secundario"
-                  size="md"
-                  disabled={descargandoPDF === 'corrige'}
-                  onClick={() => handleDescargarPDF(true)}
-                >
-                  {descargandoPDF === 'corrige' ? 'Generando...' : 'Respuestas PDF'}
-                </Boton>
-              </div>
+                  </Boton>
+                </div>
+                <div className="border-t border-gray-100" />
+              </>
+            )}
+            <div className="flex flex-wrap gap-3">
+              <Boton variante="secundario" size="md" onClick={() => router.push('/profesor')}>
+                Guardar y volver
+              </Boton>
+              <Boton
+                variante="secundario"
+                size="md"
+                onClick={() => {
+                  setTareaGenerada(null)
+                  setTareaGuardada(null)
+                  window.scrollTo(0, 0)
+                }}
+              >
+                Regenerar todo
+              </Boton>
+              <Boton
+                variante="secundario"
+                size="md"
+                disabled={descargandoPDF === 'examen'}
+                onClick={() => handleDescargarPDF(false)}
+              >
+                {descargandoPDF === 'examen' ? 'Generando...' : 'Examen PDF'}
+              </Boton>
+              <Boton
+                variante="secundario"
+                size="md"
+                disabled={descargandoPDF === 'corrige'}
+                onClick={() => handleDescargarPDF(true)}
+              >
+                {descargandoPDF === 'corrige' ? 'Generando...' : 'Respuestas PDF'}
+              </Boton>
             </div>
           </div>
-        )}
-      </main>
-
+        </div>
+      )}
       <Toast
         mensaje="Borrador guardado automaticamente"
         visible={toastVisible}

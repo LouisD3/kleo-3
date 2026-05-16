@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia18: TareaCPA = {
   secuencia_ref: 18,
+  concepto_clave: 'Encontrar el punto medio de un segmento y trazar la mediatriz',
+  contexto: {
+    personaje: 'Elena',
+    objetos: { a: { nombre: 'segmento', emoji: '📏' }, b: { nombre: 'punto medio', emoji: '📍' } },
+    valores_clave: { longitud: 4 },
+    tipo: 'geometria',
+    narrativa: 'Elena quiere encontrar el punto exacto que divide un segmento en dos partes iguales y trazar la mediatriz.',
+    pregunta_central: '¿Donde esta el punto medio de un segmento de 4 unidades?',
+    transiciones: {
+      concreto: 'Traza el segmento en el geoplano y encuentra su punto medio.',
+      bridge_pictorico: 'El punto medio divide el segmento en dos mitades de 2 unidades.',
+      pictorico: 'Observa la division en el modelo de barras.',
+      bridge_abstracto: 'Punto medio = (x1 + x2)/2. La mediatriz pasa perpendicular por ese punto.',
+      abstracto: 'Ahora calcula puntos medios y mediatrices.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'geoplano',
@@ -28,14 +44,25 @@ export const tareaSecuencia18: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
-      barras: [
-        { label: 'Mitad izquierda', valor: 2, color: 'azul' },
-        { label: 'Mitad derecha', valor: 2, color: 'verde' },
+    representacion: {
+      tipo_representacion: 'diagrama_geometrico',
+      ancho: 6,
+      alto: 5,
+      puntos: [
+        { id: 'a', x: 0, y: 2.5, label: 'A (0)' },
+        { id: 'b', x: 4, y: 2.5, label: 'B (4)' },
+        { id: 'm', x: 2, y: 2.5, label: 'M (2)' },
+        { id: 'mt', x: 2, y: 0.5 },
+        { id: 'mb', x: 2, y: 4.5 },
       ],
-      total: { valor: 4, visible: true },
-      incognita: { posicion: 'total', label: 'Punto medio en 2' },
-      orientacion: 'horizontal',
+      segmentos: [
+        { tipo: 'segmento', desde: 'a', hasta: 'b', color: 'azul', label: 'Segmento AB = 4 u' },
+        { tipo: 'segmento', desde: 'mt', hasta: 'mb', color: 'rojo', estilo: 'punteado', label: 'Mediatriz' },
+      ],
+      angulos: [
+        { vertice: 'm', lado_a: 'b', lado_b: 'mt', medida: '90°', color: 'rojo' },
+      ],
+      titulo: 'Segmento AB con punto medio M y mediatriz perpendicular',
     },
     preguntas: [
       {
@@ -48,9 +75,10 @@ export const tareaSecuencia18: TareaCPA = {
       {
         pregunta:
           'Usando el modelo, explica cómo encontrar el punto medio de un segmento y qué es la mediatriz.',
-        tipo: 'calculo',
+        tipo: 'abierta',
         respuesta:
           'El punto medio de un segmento se encuentra dividiendo su longitud entre 2. En este caso, 4 ÷ 2 = 2, así que el punto medio está en la posición 2. La mediatriz es una recta perpendicular al segmento que pasa por su punto medio. Divide al segmento en dos partes iguales y todo punto sobre la mediatriz está a la misma distancia de ambos extremos del segmento.',
+        criterios_aceptacion: ['dividir longitud entre 2', 'punto medio en posicion 2', 'mediatriz perpendicular al segmento', 'pasa por el punto medio'],
       },
     ],
   },
@@ -75,7 +103,13 @@ export const tareaSecuencia18: TareaCPA = {
         pregunta:
           'Explica con tus palabras por qué cualquier punto que está sobre la mediatriz de un segmento se encuentra a la misma distancia de ambos extremos.',
         respuesta:
-          'La mediatriz pasa por el punto medio del segmento y es perpendicular a él. Si tomas cualquier punto P sobre la mediatriz y lo unes con los dos extremos A y B del segmento, se forman dos triángulos rectángulos iguales. Comparten la misma altura (la distancia de P al segmento), tienen la misma base (la mitad del segmento) y el ángulo entre ellos es recto. Por lo tanto, los dos triángulos son congruentes, lo que significa que la distancia de P a A es igual a la distancia de P a B.',
+          'La mediatriz pasa por el punto medio del segmento y es perpendicular a él. Cualquier punto sobre la mediatriz forma dos triángulos iguales con los extremos del segmento, por lo que está a la misma distancia de ambos extremos.',
+        criterios_aceptacion: [
+          'punto medio',
+          'perpendicular',
+          'misma distancia',
+          'triángulos iguales o congruentes',
+        ],
       },
     ],
   },

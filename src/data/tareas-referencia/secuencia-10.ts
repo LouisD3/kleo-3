@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia10: TareaCPA = {
   secuencia_ref: 10,
+  concepto_clave: 'Traducir del lenguaje común al lenguaje algebraico (x + a = b)',
+  contexto: {
+    personaje: 'Valentina',
+    objetos: { a: { nombre: 'azulejo', emoji: '🟦' }, b: { nombre: 'expresion', emoji: '🔤' } },
+    valores_clave: { objetivo: 4 },
+    tipo: 'ecuacion',
+    narrativa: 'Valentina traduce frases cotidianas a expresiones algebraicas. "Un numero mas 5" se escribe x + 5.',
+    pregunta_central: '¿Que valor tiene x en la ecuacion x + 5 = 9?',
+    transiciones: {
+      concreto: 'Arma la ecuacion x + 5 = 9 con azulejos de algebra.',
+      bridge_pictorico: 'La ecuacion tiene 1 barra de x y 5 unidades en un lado, 9 en el otro.',
+      pictorico: 'Observa la ecuacion representada en el modelo.',
+      bridge_abstracto: 'Traducir a algebra permite resolver problemas sistematicamente.',
+      abstracto: 'Ahora traduce y resuelve otras expresiones.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'azulejos_algebra',
@@ -24,7 +40,8 @@ export const tareaSecuencia10: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         { label: 'x', valor: 4, color: 'amarillo' },
         { label: '5', valor: 5, color: 'azul' },
@@ -43,10 +60,11 @@ export const tareaSecuencia10: TareaCPA = {
       },
       {
         pregunta:
-          'Usando el modelo, explica qué operación hiciste para encontrar el valor de x en x + 5 = 9.',
-        tipo: 'calculo',
+          'Usando el modelo, explica que operacion hiciste para encontrar el valor de x en x + 5 = 9.',
+        tipo: 'abierta',
         respuesta:
-          'Se resta 5 de ambos lados: x + 5 - 5 = 9 - 5, entonces x = 4. La operación es una resta: al total se le quita la parte conocida.',
+          'Se resta 5 de ambos lados: x + 5 - 5 = 9 - 5, entonces x = 4. La operacion es una resta: al total se le quita la parte conocida.',
+        criterios_aceptacion: ['restar 5 de ambos lados', 'x = 4', 'operacion inversa o resta'],
       },
     ],
   },
@@ -70,7 +88,14 @@ export const tareaSecuencia10: TareaCPA = {
         pregunta:
           'Explica con tus palabras cuál es la diferencia entre una expresión algebraica y una ecuación. Da un ejemplo de cada una.',
         respuesta:
-          'Una expresión algebraica es una combinación de números y letras con operaciones, por ejemplo 3x + 2. No tiene signo de igual. Una ecuación es una igualdad entre dos expresiones, por ejemplo 3x + 2 = 11. La ecuación se puede resolver para encontrar el valor de la incógnita, mientras que la expresión solo representa una cantidad.',
+          'Una expresión algebraica tiene números y letras pero sin signo igual, por ejemplo 3x + 2. Una ecuación tiene signo igual, por ejemplo 3x + 2 = 11, y se puede resolver para encontrar el valor de x.',
+        criterios_aceptacion: [
+          'expresión sin signo igual',
+          'ecuación con signo igual',
+          'ejemplo de expresión',
+          'ejemplo de ecuación',
+          'incógnita o resolver',
+        ],
       },
     ],
   },

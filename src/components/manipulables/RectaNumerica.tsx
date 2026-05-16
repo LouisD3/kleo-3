@@ -173,6 +173,8 @@ export default function RectaNumerica({
           ref={svgRef}
           viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
           className="w-full max-w-md touch-none select-none"
+          role="application"
+          aria-label="Recta numerica interactiva"
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
@@ -304,7 +306,7 @@ export default function RectaNumerica({
               posicion === null
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 : errorFlash
-                  ? 'bg-red-500 text-white animate-[shake_0.3s_ease-in-out]'
+                  ? 'bg-amber-500 text-white animate-[shake_0.3s_ease-in-out]'
                   : 'bg-gray-900 text-white hover:bg-gray-800 active:scale-[0.98]'
             }
           `}

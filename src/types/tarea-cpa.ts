@@ -31,9 +31,11 @@ export type TipoConcreto =
   | 'compas_circulo' // compass/circle drawing tool
   | 'tabla_verdad' // truth table for logic propositions
   | 'interruptores_binarios' // ON/OFF switches for binary numbers
+  | 'transportador' // draggable protractor for measuring angles
+  | 'varillas_triangulo' // 3 adjustable rods — triangle inequality explorer
   | 'solidos_3d' // 3D solids (geometry, future)
 
-/** Spec for dulces_agrupables manipulable */
+/** Spec for dulces_agrupables manipulable (generalized grouping) */
 export interface DulcesAgrupablesSpec {
   tipo_concreto: 'dulces_agrupables'
   cantidad: number
@@ -41,6 +43,14 @@ export interface DulcesAgrupablesSpec {
   soluciones_validas: Array<{ grupos: number; por_grupo: number }>
   pregunta: string
   pista?: string
+  /** Label for items being grouped (e.g. "limon"). Falls back to "dulce". */
+  etiqueta?: string
+  /** Emoji rendered instead of CandySVG (e.g. "🍋"). Falls back to colored circles. */
+  emoji?: string
+  /** Label for group zones (e.g. "jarra"). Falls back to "Grupo". */
+  etiqueta_grupo?: string
+  /** Emoji for group headers (e.g. "🫙"). */
+  emoji_grupo?: string
 }
 
 /** Spec for chocolate_secable manipulable */
@@ -200,6 +210,29 @@ export interface InterruptoresBinariosSpec {
   pista?: string
 }
 
+/** Spec for transportador — draggable SVG protractor for measuring angles */
+export interface TransportadorSpec {
+  tipo_concreto: 'transportador'
+  angulo_objetivo: number // correct angle in degrees (e.g. 45)
+  tolerancia?: number // margin of error in degrees (default 5)
+  angulo_inicial?: number // starting angle (default 0)
+  pregunta: string
+  pista?: string
+}
+
+/** Spec for varillas_triangulo — 3 adjustable rods to explore triangle inequality */
+export interface VarillasTrianguloSpec {
+  tipo_concreto: 'varillas_triangulo'
+  lado_a: number // initial/suggested length for side a
+  lado_b: number // initial/suggested length for side b
+  lado_c: number // initial/suggested length for side c
+  max_longitud: number // max slider value (e.g. 10)
+  /** Whether the given sides form a valid triangle (for validation) */
+  forma_triangulo: boolean
+  pregunta: string
+  pista?: string
+}
+
 // Union of all concrete specs (extend as new manipulables are built)
 export type ManipulableSpec =
   | DulcesAgrupablesSpec
@@ -218,6 +251,8 @@ export type ManipulableSpec =
   | CompasCirculoSpec
   | TablaVerdadSpec
   | InterruptoresBinariosSpec
+  | TransportadorSpec
+  | VarillasTrianguloSpec
 // Future: SolidoSpec
 
 export interface BloqueConcreto {
@@ -235,22 +270,121 @@ export interface Barra {
 }
 
 export interface ModeloBarrasSpec {
+  tipo_representacion: 'modelo_barras'
   barras: Barra[]
   total?: { valor: number; visible: boolean }
   incognita?: { posicion: 'barra' | 'total'; label: string }
   orientacion?: 'horizontal' | 'vertical'
 }
 
+// ── Diagrama Geométrico (angles, segments, distances, etc.) ─────
+
+export type TipoElementoGeo =
+  | 'punto'
+  | 'segmento'
+  | 'angulo'
+  | 'recta'
+  | 'arco'
+  | 'poligono'
+  | 'cuadricula'
+
+export interface PuntoGeo {
+  id: string
+  x: number
+  y: number
+  label?: string
+}
+
+export interface SegmentoGeo {
+  tipo: 'segmento' | 'recta'
+  desde: string // punto id
+  hasta: string // punto id
+  label?: string
+  estilo?: 'solido' | 'punteado' | 'doble'
+  color?: string
+  medida?: string // e.g. "4 u" or "3 cm"
+}
+
+export interface AnguloGeo {
+  vertice: string // punto id
+  lado_a: string // punto id
+  lado_b: string // punto id
+  medida?: string // e.g. "45°"
+  color?: string
+  arco?: boolean // draw arc (default true)
+}
+
+export interface PoligonoGeo {
+  puntos: string[] // punto ids in order
+  relleno?: string // fill color
+  opacidad?: number
+}
+
+export interface CuadriculaGeo {
+  filas: number
+  columnas: number
+  celdas_resaltadas?: Array<[number, number]> // [fila, col] pairs to highlight
+  color_resaltado?: string
+}
+
+export interface CirculoGeo {
+  centro_id: string // ref to a punto
+  radio: number // in grid units
+  color?: string
+  estilo?: 'lleno' | 'borde' | 'punteado'
+  label?: string
+}
+
+export interface ArcoGeo {
+  centro_id: string // ref to a punto
+  radio: number
+  desde_grados: number // 0° = east, counterclockwise (math convention)
+  hasta_grados: number
+  color?: string
+  relleno?: boolean // if true, draw filled sector
+  label?: string
+}
+
+export interface DiagramaGeometricoSpec {
+  tipo_representacion: 'diagrama_geometrico'
+  ancho: number // viewBox width in grid units
+  alto: number // viewBox height in grid units
+  puntos: PuntoGeo[]
+  segmentos?: SegmentoGeo[]
+  angulos?: AnguloGeo[]
+  poligonos?: PoligonoGeo[]
+  cuadricula?: CuadriculaGeo
+  circulos?: CirculoGeo[]
+  arcos?: ArcoGeo[]
+  titulo?: string
+}
+
+// ── Tabla pictórica (logic, stats, comparisons) ─────────────────
+
+export interface TablaPictoricaSpec {
+  tipo_representacion: 'tabla'
+  columnas: Array<{ key: string; header: string }>
+  filas: Array<Record<string, string | number | boolean>>
+  resaltados?: Array<{ fila: number; columna: string; color: string }>
+  titulo?: string
+}
+
+export type RepresentacionPictorica = ModeloBarrasSpec | DiagramaGeometricoSpec | TablaPictoricaSpec
+
 export interface PreguntaPictorico {
   pregunta: string
   tipo: TipoPregunta
   opciones?: string[]
   respuesta: string | boolean
+  /** Keywords/criteria the AI grader should look for in open answers (3-5 items) */
+  criterios_aceptacion?: string[]
 }
 
 export interface BloquePictorico {
-  modelo_barras: ModeloBarrasSpec
-  preguntas: PreguntaPictorico[] // 1-2 questions about the bar model
+  representacion: RepresentacionPictorica
+  /** @deprecated Use representacion instead. Kept for backward compat with existing tareas. */
+  modelo_barras?: ModeloBarrasSpec
+  preguntas: PreguntaPictorico[] // 1-2 questions about the visual
 }
 
 // ── Bloque Abstracto ─────────────────────────────────────────────
@@ -260,10 +394,67 @@ export interface PreguntaAbstracto {
   pregunta: string
   opciones?: string[]
   respuesta: string | boolean
+  /** Keywords/criteria the AI grader should look for in open answers (3-5 items) */
+  criterios_aceptacion?: string[]
 }
 
 export interface BloqueAbstracto {
   preguntas: PreguntaAbstracto[]
+}
+
+// ── Anchor Task context ──────────────────────────────────────────
+
+export interface ObjetoContexto {
+  nombre: string
+  emoji: string
+}
+
+export type TipoContexto =
+  | 'razon'
+  | 'proporcion'
+  | 'reparto'
+  | 'comparacion'
+  | 'fraccion'
+  | 'ecuacion'
+  | 'porcentaje'
+  | 'patron'
+  | 'medicion'
+  | 'probabilidad'
+  | 'estadistica'
+  | 'geometria'
+  | 'logica'
+  | 'numero'
+
+export interface ContextoAnchor {
+  /** Personaje protagonista del problema */
+  personaje: string
+  /** Objetos del problema (a y b forman la relacion) */
+  objetos: {
+    a: ObjetoContexto
+    b: ObjetoContexto
+  }
+  /** Valores numericos clave del anchor (flexible per topic) */
+  valores_clave: {
+    razon?: [number, number]
+    objetivo?: number
+    [key: string]: unknown
+  }
+  /** Tipo de problema pedagogico */
+  tipo: TipoContexto
+  /** Narrativa corta del problema ancla (2-3 frases) */
+  narrativa: string
+  /** Pregunta central que guia las 3 etapas */
+  pregunta_central: string
+  /** Frases de transicion narrativa entre etapas */
+  transiciones: {
+    concreto: string
+    pictorico: string
+    abstracto: string
+    /** Resumen retroactivo tras concreto (mostrado al entrar a pictorico) */
+    bridge_pictorico?: string
+    /** Resumen retroactivo tras pictorico (mostrado al entrar a abstracto) */
+    bridge_abstracto?: string
+  }
 }
 
 // ── Tarea CPA (complete structure) ───────────────────────────────
@@ -271,6 +462,11 @@ export interface BloqueAbstracto {
 export interface TareaCPA {
   /** Reference secuencia number (1-36), null for custom AI-generated tareas */
   secuencia_ref: number | null
+  /** Short concept label shown to teachers (e.g. "Fracción como parte de un todo") */
+  concepto_clave?: string
+  /** Contexto narrativo que atraviesa las 3 etapas (anchor task).
+   *  Opcional para backward compat con tareas existentes. */
+  contexto?: ContextoAnchor
   concreto: BloqueConcreto
   pictorico: BloquePictorico
   abstracto: BloqueAbstracto

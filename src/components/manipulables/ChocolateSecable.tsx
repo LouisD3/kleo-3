@@ -9,6 +9,7 @@ interface Props {
   intentos_para_pista: number
   estadoInicial?: EstadoManipulable
   onValidado: (intentos: number, pistaUsada: boolean) => void
+  onDiagnostico?: (diagnostico: string) => void
   onChange?: (estado: EstadoManipulable) => void
 }
 
@@ -31,6 +32,7 @@ export default function ChocolateSecable({
   intentos_para_pista,
   estadoInicial,
   onValidado,
+  onDiagnostico,
   onChange,
 }: Props) {
   const totalPiezas = spec.filas * spec.columnas
@@ -78,8 +80,16 @@ export default function ChocolateSecable({
       if (nuevoIntentos >= intentos_para_pista && spec.pista) {
         setPistaVisible(true)
       }
+      if (onDiagnostico) {
+        const esperado = spec.soluciones_validas[0].piezas_seleccionadas
+        if (numSeleccionadas > esperado) {
+          onDiagnostico(`Seleccionaste ${numSeleccionadas} piezas, pero la fraccion ${spec.fraccion_objetivo} necesita solo ${esperado}.`)
+        } else {
+          onDiagnostico(`Seleccionaste ${numSeleccionadas} piezas, pero necesitas ${esperado} para representar ${spec.fraccion_objetivo}.`)
+        }
+      }
     }
-  }, [validado, numSeleccionadas, spec.soluciones_validas, spec.pista, intentos, intentos_para_pista, pistaVisible, onValidado])
+  }, [validado, numSeleccionadas, spec.soluciones_validas, spec.fraccion_objetivo, spec.pista, intentos, intentos_para_pista, pistaVisible, onValidado, onDiagnostico])
 
   // Piece dimensions
   const pieceW = 64
@@ -99,6 +109,8 @@ export default function ChocolateSecable({
           height={svgH}
           viewBox={`0 0 ${svgW} ${svgH}`}
           className="max-w-full h-auto"
+          role="application"
+          aria-label="Barra de chocolate partida"
         >
           {/* Background wrapper */}
           <rect
@@ -227,7 +239,7 @@ export default function ChocolateSecable({
               numSeleccionadas === 0
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 : errorFlash
-                  ? 'bg-red-500 text-white animate-[shake_0.3s_ease-in-out]'
+                  ? 'bg-amber-500 text-white animate-[shake_0.3s_ease-in-out]'
                   : 'bg-gray-900 text-white hover:bg-gray-800 active:scale-[0.98]'
             }
           `}

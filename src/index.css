@@ -4,34 +4,47 @@
 
 @layer base {
   :root {
-    --background: #fafafa;
-    --foreground: #171717;
-    --card: #ffffff;
-    --card-foreground: #171717;
-    --popover: #ffffff;
-    --popover-foreground: #171717;
-    --primary: #171717;
-    --primary-foreground: #fafafa;
-    --secondary: #f5f5f5;
-    --secondary-foreground: #171717;
-    --muted: #f5f5f5;
+    /* Surfaces — crème grisé */
+    --background: #F0EEEB;
+    --card: #FFFFFF;
+    --card-foreground: #1A1A1A;
+    --popover: #FFFFFF;
+    --popover-foreground: #1A1A1A;
+
+    /* Texte */
+    --foreground: #1A1A1A;
+    --muted: #F0EEEB;
     --muted-foreground: #737373;
-    --accent: #f5f5f5;
-    --accent-foreground: #171717;
-    --destructive: #ef4444;
-    --border: #e5e5e5;
-    --input: #e5e5e5;
-    --ring: #a3a3a3;
-    --radius: 0.625rem;
+
+    /* Primary = noir profond */
+    --primary: #1A1A1A;
+    --primary-foreground: #FAFAFA;
+
+    /* Secondary = crème grisé un cran plus foncé */
+    --secondary: #E8E7E4;
+    --secondary-foreground: #1A1A1A;
+
+    /* Accent = JAUNE chaud */
+    --accent: #FFD93D;
+    --accent-foreground: #1A1A1A;
+
+    /* Destructive */
+    --destructive: #EF4444;
+
+    /* Borders / inputs / ring */
+    --border: #DFDDD9;
+    --input: #DFDDD9;
+    --ring: #1A1A1A;
+
+    --radius: 1rem;
   }
 
   html {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-background text-foreground;
   }
 
   * {
@@ -41,15 +54,15 @@
 
 @layer components {
   .card {
-    @apply bg-white rounded-2xl border border-gray-100 shadow-sm;
+    @apply bg-white rounded-2xl shadow-sm;
   }
 
   .input-base {
-    @apply w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amarillo focus:border-amarillo transition-all;
+    @apply w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-all;
   }
 
   .label-base {
-    @apply block text-sm font-medium text-gray-700 mb-1.5;
+    @apply block text-sm font-medium text-tinta mb-1.5;
   }
 }
 
@@ -78,6 +91,49 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: #D1D1D2;
   border-radius: 99px;
+}
+
+/* ── Landing page ── */
+html {
+  scroll-behavior: smooth;
+}
+
+section[id] {
+  scroll-margin-top: 72px;
+}
+
+.nav-scrolled {
+  background-color: rgba(246, 245, 243, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.04);
+}
+
+.reveal-item {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-item.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.caret::after {
+  content: '|';
+  animation: blink 1s infinite;
+  margin-left: 2px;
+  color: #d97706;
+}
+
+.modal-mask {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }

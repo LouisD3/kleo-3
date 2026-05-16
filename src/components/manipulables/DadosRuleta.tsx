@@ -52,7 +52,7 @@ const DOT_POSITIONS: Record<number, Array<[number, number]>> = {
 function DadoSVG({ valor }: { valor: number }) {
   const dots = DOT_POSITIONS[Math.min(Math.max(valor, 1), 6)] ?? DOT_POSITIONS[1]
   return (
-    <svg width="100" height="100" viewBox="0 0 100 100">
+    <svg width="100" height="100" viewBox="0 0 100 100" role="img" aria-label={`Dado mostrando ${valor}`}>
       <rect x="5" y="5" width="90" height="90" rx="14" fill="white" stroke="#374151" strokeWidth="3" />
       {dots.map(([cx, cy], i) => (
         <circle key={`${cx}-${cy}-${i}`} cx={cx} cy={cy} r="8" fill="#111827" />
@@ -64,7 +64,7 @@ function DadoSVG({ valor }: { valor: number }) {
 function MonedaSVG({ cara }: { cara: 'aguila' | 'sol' }) {
   const isAguila = cara === 'aguila'
   return (
-    <svg width="100" height="100" viewBox="0 0 100 100">
+    <svg width="100" height="100" viewBox="0 0 100 100" role="img" aria-label={`Moneda: ${cara}`}>
       <circle cx="50" cy="50" r="45" fill={isAguila ? '#F59E0B' : '#9CA3AF'} stroke={isAguila ? '#D97706' : '#6B7280'} strokeWidth="3" />
       <circle cx="50" cy="50" r="38" fill="none" stroke={isAguila ? '#D97706' : '#6B7280'} strokeWidth="1" opacity="0.4" />
       <text x="50" y="54" textAnchor="middle" fontSize="14" fontWeight="bold" fill={isAguila ? '#78350F' : '#1F2937'}>
@@ -93,7 +93,7 @@ function RuletaSVG({
   }
 
   return (
-    <svg width="200" height="200" viewBox="0 0 100 100">
+    <svg width="200" height="200" viewBox="0 0 100 100" role="img" aria-label="Ruleta de probabilidad">
       {/* Sections */}
       {secciones.map((sec, i) => {
         const startAngle = i * anglePerSection
@@ -111,9 +111,11 @@ function RuletaSVG({
         return (
           <g key={`${sec.label}-${i}`}>
             <path d={d} fill={resolveColor(sec.color)} stroke="white" strokeWidth="1" />
-            <text x={lx} y={ly + 1} textAnchor="middle" fontSize="5" fontWeight="bold" fill="white" style={{ textShadow: '0 0 2px rgba(0,0,0,0.5)' }}>
-              {sec.label}
-            </text>
+            {anglePerSection >= 30 && (
+              <text x={lx} y={ly + 1} textAnchor="middle" fontSize={anglePerSection < 45 ? 4 : 5} fontWeight="bold" fill="white" style={{ textShadow: '0 0 2px rgba(0,0,0,0.5)' }}>
+                {sec.label}
+              </text>
+            )}
           </g>
         )
       })}
@@ -416,7 +418,7 @@ export default function DadosRuleta({
                 !respuestaProbabilidad.trim()
                   ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                   : errorFlash
-                    ? 'bg-red-500 text-white animate-[shake_0.3s_ease-in-out]'
+                    ? 'bg-amber-500 text-white animate-[shake_0.3s_ease-in-out]'
                     : 'bg-gray-900 text-white hover:bg-gray-800 active:scale-[0.98]'
               }
             `}

@@ -10,6 +10,22 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  */
 export const tareaSecuencia09a: TareaCPA = {
   secuencia_ref: 9,
+  concepto_clave: 'Identificar el patron en una sucesion aritmetica',
+  contexto: {
+    personaje: 'Miguel',
+    objetos: { a: { nombre: 'figura', emoji: '🔷' }, b: { nombre: 'patron', emoji: '🔄' } },
+    valores_clave: { patron: [1, 3, 5], siguiente: 7 },
+    tipo: 'patron',
+    narrativa: 'Miguel observa una secuencia de figuras que crece siguiendo un patron. Quiere descubrir la regla.',
+    pregunta_central: '¿Cuantas figuras tendra el siguiente termino?',
+    transiciones: {
+      concreto: 'Construye el siguiente termino del patron con las piezas.',
+      bridge_pictorico: 'El patron crece de 2 en 2: 1, 3, 5... el siguiente es 7.',
+      pictorico: 'Observa la progresion en el modelo de barras.',
+      bridge_abstracto: 'La regla es sumar 2 cada vez. Es una sucesion aritmetica.',
+      abstracto: 'Ahora encuentra reglas en otras sucesiones.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'patron_figuras',
@@ -23,7 +39,8 @@ export const tareaSecuencia09a: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
+    representacion: {
+      tipo_representacion: 'modelo_barras',
       barras: [
         { label: 'Termino 1', valor: 1, color: 'amarillo' },
         { label: 'Termino 2', valor: 3, color: 'azul' },
@@ -70,7 +87,13 @@ export const tareaSecuencia09a: TareaCPA = {
         pregunta:
           'Explica con tus palabras que es la diferencia constante en una sucesion. Por que te ayuda a predecir los siguientes terminos?',
         respuesta:
-          'La diferencia constante es el numero que siempre se suma para pasar de un termino al siguiente. En el patron de cuadrados era 2: siempre sumabamos 2. Nos ayuda a predecir porque si sabemos que la diferencia es fija, podemos calcular cualquier termino futuro sin necesidad de construirlo: solo sumamos la diferencia las veces necesarias.',
+          'La diferencia constante es el numero que se suma siempre entre un termino y el siguiente. En esta sucesion era 2. Con ese dato puedes calcular cualquier termino siguiente sin construir todos los anteriores.',
+        criterios_aceptacion: [
+          'numero que se suma igual cada vez',
+          'diferencia fija o constante',
+          'permite predecir terminos futuros',
+          'ejemplo con la sucesion vista',
+        ],
       },
     ],
   },

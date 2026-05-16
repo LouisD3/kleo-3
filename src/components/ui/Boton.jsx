@@ -17,7 +17,10 @@ const SIZE_MAP = {
 }
 
 const PRIMARIO_CLASSES =
-  'bg-amarillo hover:bg-amarillo-hover text-gray-900 border-amarillo focus-visible:ring-amarillo shadow-sm hover:shadow-md active:scale-95'
+  'bg-tinta hover:bg-tinta-600 text-amarillo border-tinta focus-visible:ring-tinta shadow-none active:scale-95'
+
+const SECUNDARIO_CLASSES =
+  'bg-white hover:bg-crema-50 text-tinta border border-crema-300 shadow-none hover:border-tinta-400'
 
 export default function Boton({
   children,
@@ -39,9 +42,10 @@ export default function Boton({
       variant={variant}
       size={mappedSize}
       className={cn(
-        'rounded-xl gap-2 font-semibold active:scale-95',
+        'rounded-full gap-2 font-medium active:scale-95',
         variante === 'primario' && PRIMARIO_CLASSES,
-        variante === 'peligro' && 'bg-red-50 hover:bg-red-100 text-red-700 border-red-200',
+        variante === 'secundario' && SECUNDARIO_CLASSES,
+        variante === 'peligro' && 'bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-200',
         size === 'sm' && 'px-3 py-1.5 h-auto text-sm',
         size === 'md' && 'px-5 py-2.5 h-auto text-sm',
         size === 'lg' && 'px-7 py-3 h-auto text-base',

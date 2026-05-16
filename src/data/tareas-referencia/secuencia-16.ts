@@ -5,11 +5,27 @@ import type { TareaCPA } from '@/types/tarea-cpa'
  * Concepto clave: Trazar rectas paralelas y perpendiculares
  *
  * Concreto: Geoplano (trazar una recta horizontal)
- * Pictorico: Modelo en barras comparando rectas paralelas y perpendiculares
+ * Pictorico: Diagrama geometrico — rectas paralelas y perpendiculares con angulo 90°
  * Abstracto: 3 preguntas con progresión de dificultad sobre rectas
  */
 export const tareaSecuencia16: TareaCPA = {
   secuencia_ref: 16,
+  concepto_clave: 'Trazar rectas paralelas y perpendiculares',
+  contexto: {
+    personaje: 'Roberto',
+    objetos: { a: { nombre: 'recta', emoji: '📐' }, b: { nombre: 'angulo', emoji: '📏' } },
+    valores_clave: { angulo: 90 },
+    tipo: 'geometria',
+    narrativa: 'Roberto observa las lineas del patio de su escuela. Algunas van en la misma direccion y otras se cruzan formando angulos rectos.',
+    pregunta_central: '¿Como distinguir rectas paralelas de perpendiculares?',
+    transiciones: {
+      concreto: 'Traza una recta horizontal en el geoplano para explorar.',
+      bridge_pictorico: 'Una recta horizontal tiene la misma direccion que otra paralela.',
+      pictorico: 'Observa en el diagrama como se ven las rectas paralelas y perpendiculares.',
+      bridge_abstracto: 'Las paralelas nunca se cruzan. Las perpendiculares forman 90°.',
+      abstracto: 'Ahora clasifica rectas en diferentes contextos.',
+    },
+  },
   concreto: {
     manipulable: {
       tipo_concreto: 'geoplano',
@@ -26,13 +42,28 @@ export const tareaSecuencia16: TareaCPA = {
     intentos_para_pista: 3,
   },
   pictorico: {
-    modelo_barras: {
-      barras: [
-        { label: 'Recta A', valor: 4, color: 'azul' },
-        { label: 'Recta B', valor: 4, color: 'verde' },
+    representacion: {
+      tipo_representacion: 'diagrama_geometrico',
+      ancho: 6,
+      alto: 5,
+      puntos: [
+        { id: 'a1', x: 1, y: 4, label: 'A' },
+        { id: 'a2', x: 5, y: 4 },
+        { id: 'b1', x: 1, y: 2, label: 'B' },
+        { id: 'b2', x: 5, y: 2 },
+        { id: 'c1', x: 3, y: 0, label: 'C' },
+        { id: 'c2', x: 3, y: 5 },
+        { id: 'ix', x: 3, y: 2, label: '' },
       ],
-      total: { valor: 4, visible: false },
-      orientacion: 'horizontal',
+      segmentos: [
+        { tipo: 'recta', desde: 'a1', hasta: 'a2', color: 'azul', label: 'Recta A' },
+        { tipo: 'recta', desde: 'b1', hasta: 'b2', color: 'verde', label: 'Recta B (paralela a A)' },
+        { tipo: 'recta', desde: 'c1', hasta: 'c2', color: 'rojo', label: 'Recta C (perpendicular)', estilo: 'punteado' },
+      ],
+      angulos: [
+        { vertice: 'ix', lado_a: 'b2', lado_b: 'c2', medida: '90°', color: 'rojo' },
+      ],
+      titulo: 'Rectas paralelas y perpendiculares',
     },
     preguntas: [
       {
@@ -45,9 +76,10 @@ export const tareaSecuencia16: TareaCPA = {
       {
         pregunta:
           'Explica la diferencia entre rectas paralelas y rectas perpendiculares. Menciona un ejemplo de cada una que veas en tu salón de clases.',
-        tipo: 'calculo',
+        tipo: 'abierta',
         respuesta:
-          'Las rectas paralelas son rectas que van en la misma dirección y nunca se cruzan, como los bordes superior e inferior del pizarrón. Las rectas perpendiculares se cruzan formando un ángulo de 90°, como el borde horizontal y el borde vertical de una puerta.',
+          'Las rectas paralelas van en la misma dirección y nunca se cruzan. Las rectas perpendiculares sí se cruzan y forman un ángulo de 90°.',
+        criterios_aceptacion: ['paralelas nunca se cruzan', 'perpendiculares forman 90°', 'ejemplo correcto de cada tipo'],
       },
     ],
   },
@@ -72,7 +104,8 @@ export const tareaSecuencia16: TareaCPA = {
         pregunta:
           'Imagina que caminas por tu colonia. Describe una situación donde veas rectas paralelas y otra donde veas rectas perpendiculares. Explica por qué las clasificas así.',
         respuesta:
-          'Las vías del tren son un ejemplo de rectas paralelas: los dos rieles van siempre a la misma distancia y nunca se juntan. Un cruce de calles donde una calle va de norte a sur y otra de este a oeste es un ejemplo de rectas perpendiculares: se cruzan formando un ángulo recto de 90°. Se clasifican así porque las paralelas mantienen siempre la misma distancia entre ellas, mientras que las perpendiculares forman ángulos rectos al intersecarse.',
+          'Las vías del tren son paralelas porque nunca se juntan. Un cruce de calles es perpendicular porque las calles se cruzan formando un ángulo recto de 90°.',
+        criterios_aceptacion: ['ejemplo de rectas paralelas', 'ejemplo de rectas perpendiculares', 'justificación con dirección o ángulo', 'ángulo recto mencionado'],
       },
     ],
   },
